@@ -1,0 +1,15 @@
+.recipe-post {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: start;
+
+    margin: 1rem;
+
+    width: 400px;
+}
+
+.recipe-post {
+    color: black;
+    font-weight: 500;
+}

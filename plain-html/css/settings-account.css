@@ -1,0 +1,33 @@
+button {
+    background-color: #0170e7;
+    color: white;
+    border-color: transparent;
+    margin: 5px;
+    padding: 8px;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    width: 100px;
+}
+
+button:hover {
+  background-color: transparent;
+  color: #0170e7;
+  border: 2px solid #0170e7;
+}
+
+.delete-button {
+    background-color: red;
+    color: white;
+    border-color: transparent;
+    margin: 5px;
+    padding: 8px;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    width: 100px;
+}
+
+.delete-button:hover {
+  background-color: transparent;
+  color: red;
+  border: 2px solid red;
+}

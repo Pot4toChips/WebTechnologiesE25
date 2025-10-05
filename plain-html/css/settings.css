@@ -1,0 +1,24 @@
+.setting-item {
+    font-weight: 500;
+    padding: 0.625rem 0.75rem;
+    border-radius: 5px;
+}
+
+.setting-item:hover {
+    background-color: #e7ebee;
+    text-decoration: none;
+}
+
+.setting-item:hover p,
+.setting-item:hover i {
+  color: #0170e7;
+}
+
+
+
+i {
+    position: relative;
+    font-size: 1.4rem;
+    margin-right: 0.5rem;
+    font-weight: 500;
+}

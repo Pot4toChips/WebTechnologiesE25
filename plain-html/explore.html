@@ -50,7 +50,20 @@
             <main class="content d-flex flex-column align-items-center justify-content-start overflow-x-hidden overflow-y-hidden col-10 m-0 p-0">
                 <div class="d-flex flex-column align-items-center justify-content-start overflow-auto w-100 px-4 pt-4">
                     <!-- Include content related to current page -->
-                    <h5>Explore</h5>
+                                        <div class="d-flex align-items-center justify-content-between w-100">
+                                            <h5 class="m-0">Explore</h5>
+                                        </div>
+                    <!-- Feed: posts will be appended into #feed by js/explore.js -->
+                    <div id="feed" class="container-fluid p-0 d-flex flex-column justify-content-center align-items-center grid">
+                    </div>
+
+                    <!-- Loader and sentinel used by the infinite scroll script -->
+                    <div id="loader" class="my-3 d-none text-center">
+                        <div class="spinner-border text-secondary" role="status" aria-hidden="true"></div>
+                        <span class="visually-hidden">Loading</span>
+                    </div>
+
+                    <div id="sentinel" class="text-center text-secondary mb-4">Scroll to load more</div>
                     <!-- Content ends here -->
                 </div>
             </main>
@@ -58,6 +71,8 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+            <!-- Grid-only view: no toggle required -->
+        <script src="js/explore.js"></script>
 </body>
 
 </html>

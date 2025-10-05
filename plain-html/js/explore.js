@@ -22,9 +22,7 @@
 
   function makePostNode(post) {
     let recipePost = document.createElement("article");
-    recipePost.className = "recipe-post content-card d-flex flex-column align-items-start justify-content-start mb-3";
-    recipePost.style.width = "320px";
-    recipePost.style.height = "400px";
+    recipePost.className = "recipe-post content-card d-flex flex-column align-items-start justify-content-start m-1";
     recipePost.innerHTML = `
       <div class="recipe-post-header d-flex flex-row align-items-center justify-content-between m-0 w-100">
         <p class="m-0">${post.title}</p>
@@ -35,8 +33,8 @@
         </div>
       </div>
       <hr class="border-2 w-100 my-2">
-      <div class="d-flex flex-row align-items-start justify-content-start my-2 w-100 justify-content-center">
-        <img class="rounded" src="${post.image}" alt="Image of ${post.title}" style="width:280px;height:280px;object-fit:cover;">
+      <div class="d-flex flex-row align-items-start justify-content-start mt-2 w-100 justify-content-center">
+        <img class="w-100 rounded" src="${post.image}" alt="Image of ${post.title}" style="height:280px;object-fit:cover;">
       </div>
     `;
     return recipePost;

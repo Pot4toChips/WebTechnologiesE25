@@ -7,8 +7,12 @@
   // Simulated image pool 
   const images = [
     'images/chicken_alfredo.png',
-    'images/chicken_alfredo.png',
-    'images/chicken_alfredo.png'
+    'images/beef_stir_fry.png',
+    'images/vegetarian_lasagna.png',
+    'images/shrimp_tacos.png',
+    'images/postex.png',
+    'images/postex2.png',
+    'images/postex3.png'
   ];
 
   const PAGE_SIZE = 6;
@@ -17,16 +21,25 @@
   let done = false;
 
   function makePostNode(post) {
-    const tile = document.createElement('div');
-    tile.className = 'tile';
-    tile.tabIndex = 0; 
-    const img = document.createElement('img');
-    
-    img.alt = post.alt || '';
-    img.loading = 'lazy';
-    img.src = post.image;
-    tile.appendChild(img);
-    return tile;
+    let recipePost = document.createElement("article");
+    recipePost.className = "recipe-post content-card d-flex flex-column align-items-start justify-content-start mb-3";
+    recipePost.style.width = "320px";
+    recipePost.style.height = "400px";
+    recipePost.innerHTML = `
+      <div class="recipe-post-header d-flex flex-row align-items-center justify-content-between m-0 w-100">
+        <p class="m-0">${post.title}</p>
+        <div class="d-flex flex-row align-items-center justify-content-center">
+          <a class="text-secondary m-0">${post.author}</a>
+          <p class="text-secondary m-0 mx-1">•</p>
+          <p class="text-secondary m-0">${post.time}</p>
+        </div>
+      </div>
+      <hr class="border-2 w-100 my-2">
+      <div class="d-flex flex-row align-items-start justify-content-start my-2 w-100 justify-content-center">
+        <img class="rounded" src="${post.image}" alt="Image of ${post.title}" style="width:280px;height:280px;object-fit:cover;">
+      </div>
+    `;
+    return recipePost;
   }
 
   function fetchPosts(pageNumber, pageSize) {
@@ -37,15 +50,32 @@
           return;
         }
 
+        const authorNames = [
+          "@richardtivolt", "@pauldonici", "@hubageller", "@romanteren", "@foodiequeen", "@chefmax", "@sarahcooks", "@tastytom", "@veggievibe", "@spicyjane", "@bakerbob", "@grillguy", "@saucysue", "@noodleking", "@sweetpea"
+        ];
+        const imageToRecipe = {
+          "chicken_alfredo": "Chicken Alfredo",
+          "beef_stir_fry": "Beef Stir Fry",
+          "vegetarian_lasagna": "Vegetarian Lasagna",
+          "shrimp_tacos": "Shrimp Tacos",
+          "monke": "Monke Special",
+          "postex": "Banana Cake",
+          "postex2": "Pasta",
+          "postex3": "Vareniki"
+        };
         const items = Array.from({ length: pageSize }, (_, i) => {
           const n = pageNumber * pageSize + i + 1;
+          const author = authorNames[Math.floor(Math.random() * authorNames.length)];
+          const imagePath = images[n % images.length];
+          const imageKey = imagePath.split('/').pop().replace('.png', '');
+          const title = imageToRecipe[imageKey] || `Recipe ${n}`;
           return {
             id: `post-${n}`,
-            title: `Recipe ${n}`,
-            author: `user${(n % 10) + 1}`,
+            title,
+            author,
             time: `${(n % 60) + 1}m`,
-            image: images[n % images.length],
-            alt: `Photo of recipe ${n}`,
+            image: imagePath,
+            alt: `Photo of ${title}`,
           };
         });
         resolve(items);
@@ -149,7 +179,7 @@
     scrollTarget.addEventListener('scroll', onScrollFallback, { passive: true });
 
     const COLUMNS = 3;
-    const FALLBACK_TILE = 200; 
+    const FALLBACK_TILE = 200; // px
 
     function initialLoadIfNeeded() {
       const rootHeight = root ? root.clientHeight : window.innerHeight;

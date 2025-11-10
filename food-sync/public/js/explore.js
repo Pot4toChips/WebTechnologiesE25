@@ -1,0 +1,225 @@
+
+(function () {
+  const feed = document.getElementById('feed');
+  const sentinel = document.getElementById('sentinel');
+  const loading = document.getElementById('loader');
+
+  // Simulated image pool 
+  const images = [
+    'images/chicken_alfredo.png',
+    'images/beef_stir_fry.png',
+    'images/vegetarian_lasagna.png',
+    'images/shrimp_tacos.png',
+    'images/postex.png',
+    'images/postex2.png',
+    'images/postex3.png'
+  ];
+
+  const PAGE_SIZE = 6;
+  let page = 0;
+  let isLoading = false;
+  let done = false;
+
+  function makePostNode(post) {
+    let recipePost = document.createElement("article");
+    recipePost.className = "recipe-post content-card d-flex flex-column align-items-start justify-content-start m-1";
+    recipePost.innerHTML = `
+      <div class="recipe-post-header d-flex flex-row align-items-center justify-content-between m-0 w-100">
+        <p class="m-0">${post.title}</p>
+        <div class="d-flex flex-row align-items-center justify-content-center">
+          <a class="text-secondary m-0">${post.author}</a>
+          <p class="text-secondary m-0 mx-1">•</p>
+          <p class="text-secondary m-0">${post.time}</p>
+        </div>
+      </div>
+      <hr class="border-2 w-100 my-2">
+      <div class="d-flex flex-row align-items-start justify-content-start mt-2 w-100 justify-content-center">
+        <img class="w-100 rounded" src="${post.image}" alt="Image of ${post.title}" style="height:280px;object-fit:cover;">
+      </div>
+    `;
+    return recipePost;
+  }
+
+  function fetchPosts(pageNumber, pageSize) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        if (pageNumber >= 5) {
+          resolve([]);
+          return;
+        }
+
+        const authorNames = [
+          "@richardtivolt", "@pauldonici", "@hubageller", "@romanteren", "@foodiequeen", "@chefmax", "@sarahcooks", "@tastytom", "@veggievibe", "@spicyjane", "@bakerbob", "@grillguy", "@saucysue", "@noodleking", "@sweetpea"
+        ];
+        const imageToRecipe = {
+          "chicken_alfredo": "Chicken Alfredo",
+          "beef_stir_fry": "Beef Stir Fry",
+          "vegetarian_lasagna": "Vegetarian Lasagna",
+          "shrimp_tacos": "Shrimp Tacos",
+          "monke": "Monke Special",
+          "postex": "Banana Cake",
+          "postex2": "Pasta",
+          "postex3": "Vareniki"
+        };
+        const items = Array.from({ length: pageSize }, (_, i) => {
+          const n = pageNumber * pageSize + i + 1;
+          const author = authorNames[Math.floor(Math.random() * authorNames.length)];
+          const imagePath = images[n % images.length];
+          const imageKey = imagePath.split('/').pop().replace('.png', '');
+          const title = imageToRecipe[imageKey] || `Recipe ${n}`;
+          return {
+            id: `post-${n}`,
+            title,
+            author,
+            time: `${(n % 60) + 1}m`,
+            image: imagePath,
+            alt: `Photo of ${title}`,
+          };
+        });
+        resolve(items);
+      }, 600 + Math.random() * 400);
+    });
+  }
+
+  async function loadMore() {
+    if (isLoading || done) return;
+    isLoading = true;
+    loading.classList.remove('d-none');
+
+    try {
+      const feedEl = document.getElementById('feed');
+      const isGrid = feedEl && feedEl.classList.contains('grid');
+      const placeholderNodes = [];
+      for (let i = 0; i < PAGE_SIZE; i++) {
+        const ph = document.createElement(isGrid ? 'div' : 'article');
+        if (isGrid) {
+          ph.className = 'tile skeleton';
+        } else {
+          ph.className = 'post recipe-post content-card skeleton';
+          ph.style.height = '200px';
+        }
+        feedEl.appendChild(ph);
+        placeholderNodes.push(ph);
+      }
+
+      const posts = await fetchPosts(page, PAGE_SIZE);
+      if (!posts || posts.length === 0) {
+        done = true;
+        sentinel.textContent = 'No more posts';
+        observer.unobserve(sentinel);
+        placeholderNodes.forEach(n => n.remove());
+      } else {
+        for (let i = 0; i < posts.length; i++) {
+          const p = posts[i];
+          const node = makePostNode(p);
+          const placeholder = placeholderNodes[i];
+          if (placeholder && placeholder.parentNode) placeholder.parentNode.replaceChild(node, placeholder);
+          else feed.appendChild(node);
+        }
+        page += 1;
+      }
+    } catch (err) {
+      console.error('Failed to load posts', err);
+    } finally {
+      isLoading = false;
+      loading.classList.add('d-none');
+    }
+  }
+
+  let observer = null;
+
+  function createObserver(root) {
+    const cb = (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          loadMore();
+        }
+      }
+    };
+
+    observer = new IntersectionObserver(cb, {
+      root: root || null,
+      rootMargin: '200px',
+      threshold: 0.1,
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!feed || !sentinel || !loading) return;
+
+    let root = null;
+    let node = sentinel.parentElement;
+    while (node && node !== document.body) {
+      const style = getComputedStyle(node);
+      const overflowCombined = (style.overflow + ' ' + style.overflowY + ' ' + style.overflowX).toLowerCase();
+      if (/auto|scroll|overlay/.test(overflowCombined)) {
+        root = node;
+        break;
+      }
+      node = node.parentElement;
+    }
+
+    createObserver(root);
+    observer.observe(sentinel);
+    let last = 0;
+    function onScrollFallback() {
+      const now = Date.now();
+      if (now - last < 150) return;
+      last = now;
+      const rect = sentinel.getBoundingClientRect();
+      let rootRect;
+      if (root && root.getBoundingClientRect) rootRect = root.getBoundingClientRect();
+      else rootRect = { top: 0, bottom: window.innerHeight };
+      const distance = rect.top - rootRect.bottom;
+      if (distance < 400) loadMore();
+    }
+    const scrollTarget = root || window;
+    scrollTarget.addEventListener('scroll', onScrollFallback, { passive: true });
+
+    const COLUMNS = 3;
+    const FALLBACK_TILE = 200; // px
+
+    function initialLoadIfNeeded() {
+      const rootHeight = root ? root.clientHeight : window.innerHeight;
+      const feedWidth = feed.clientWidth || (document.documentElement.clientWidth - 40);
+      const tileWidth = feedWidth / COLUMNS || FALLBACK_TILE;
+      const rowsThatFit = Math.ceil(rootHeight / tileWidth);
+      let initialNeeded = rowsThatFit * COLUMNS + 3; 
+      if (initialNeeded < PAGE_SIZE) initialNeeded = PAGE_SIZE;
+
+      const placeholderNodes = [];
+      for (let i = 0; i < initialNeeded; i++) {
+        const ph = document.createElement('div');
+        ph.className = 'tile skeleton';
+        feed.appendChild(ph);
+        placeholderNodes.push(ph);
+      }
+
+      fetchPosts(0, initialNeeded).then(posts => {
+        if (!posts || posts.length === 0) {
+          done = true;
+          sentinel.textContent = 'No more posts';
+          placeholderNodes.forEach(n => n.remove());
+          return;
+        }
+
+        for (let i = 0; i < posts.length; i++) {
+          const p = posts[i];
+          const node = makePostNode(p);
+          const placeholder = placeholderNodes[i];
+          if (placeholder && placeholder.parentNode) placeholder.parentNode.replaceChild(node, placeholder);
+          else feed.appendChild(node);
+        }
+
+        page = Math.ceil(initialNeeded / PAGE_SIZE);
+      }).catch(err => {
+        console.error('Initial load failed', err);
+        placeholderNodes.forEach(n => n.remove());
+      }).finally(() => {
+        loading.classList.add('d-none');
+      });
+    }
+
+    initialLoadIfNeeded();
+  });
+})();

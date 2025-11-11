@@ -1,3 +1,5 @@
+import { sendAPIRequest } from "./scripts.js";
+
 const recipePosts = document.getElementById("recipe-posts");
 
 function timeSince(dateStr) {
@@ -19,7 +21,7 @@ function timeSince(dateStr) {
     return `${days}d`;
 }
 
-function createRecipePost(recipePostData) {
+function renderRecipePost(recipePostData) {
     let recipePost = document.createElement("article");
     recipePost.className = "recipe-post content-card d-flex flex-column align-items-start justify-content-start mb-3";
     recipePost.innerHTML = `
@@ -52,7 +54,7 @@ function createRecipePost(recipePostData) {
     return recipePost;
 }
 
-let recipePostDatas = [
+let recipeDatas = [
     {
         title: "Chicken Alfredo",
         author: "@richardtivolt",
@@ -161,7 +163,24 @@ let recipePostDatas = [
     }
 ];
 
-recipePostDatas.forEach(recipePostData => {
-    let recipePost = createRecipePost(recipePostData);
-    recipePosts.appendChild(recipePost);
-});
+async function createRecipePost(recipePostData) {
+    await sendAPIRequest("recipe-posts/create-recipe-post", "POST", recipePostData);
+}
+
+async function getRecipePosts() {
+    let recipePostDatas = await sendAPIRequest("recipe-posts/get-recipe-posts", "GET");
+
+    recipePostDatas.forEach(recipePostData => {
+        let recipePost = renderRecipePost(recipePostData);
+        recipePosts.appendChild(recipePost);
+    });
+}
+
+async function setup() {
+    /*for (let i = 0; i < recipeDatas.length; i++) {
+        await createRecipePost(recipeDatas[i]);
+    }*/
+    await getRecipePosts();
+}
+
+setup();

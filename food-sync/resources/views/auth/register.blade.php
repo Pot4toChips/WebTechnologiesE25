@@ -24,8 +24,8 @@
             </div>
 
             <div class="mb-3">
-                <label for="confirm-password" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" name="confirm-password" required>
+                <label for="password_confirmation" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" name="password_confirmation" required>
             </div>
 
             <x-input-error :messages="$errors->get('name')" class="mb-3" />

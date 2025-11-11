@@ -52,7 +52,7 @@
                 </form>
 
                 <div class="text-center mt-2">
-                    <span>Already have an account? <a href="login.html" class="text-decoration-none">Login here</a></span>
+                    <span>Already have an account? <a href="{{ route('login') }}" class="text-decoration-none">Login here</a></span>
                 </div>
             </div>
         </main>

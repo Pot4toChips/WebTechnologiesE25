@@ -1,4 +1,4 @@
-import { sendAPIRequest } from "./scripts.js";
+import { sendAPIRequest, storageURL } from "./scripts.js";
 
 const recipePosts = document.getElementById("recipe-posts");
 
@@ -35,7 +35,7 @@ function renderRecipePost(recipePostData) {
         </div>
         <hr class="border-2 w-100 my-2">
         <div class="d-flex flex-row align-items-start justify-content-start my-2">
-            <img class="rounded me-3" src="${recipePostData.image}" alt="Image of ${recipePostData.title}">
+            <img class="rounded me-3" src="${storageURL}/recipe_post_images/${recipePostData.image}" alt="Image of ${recipePostData.title}">
             <div class="d-flex flex-column align-items-start justify-content-start h-100">
                 <p class="m-0">Ingredients</p>
                 <ul class="m-0">
@@ -59,7 +59,7 @@ let recipeDatas = [
         title: "Chicken Alfredo",
         author: "@richardtivolt",
         time: "2025-10-04 23:11:00",
-        image: "images/chicken_alfredo.png",
+        image: "chicken_alfredo.webp",
         ingredients: [
             "2 chicken breasts",
             "200g fettuccine pasta",
@@ -82,7 +82,7 @@ let recipeDatas = [
         title: "Beef Stir Fry",
         author: "@pauldonici",
         time: "2025-10-03 18:25:00",
-        image: "images/beef_stir_fry.png",
+        image: "beef_stir_fry.webp",
         ingredients: [
             "400g beef sirloin, thinly sliced",
             "2 cups mixed vegetables (broccoli, bell pepper, carrots, snap peas)",
@@ -109,7 +109,7 @@ let recipeDatas = [
         title: "Vegetarian Lasagna",
         author: "@hubageller",
         time: "2025-10-02 14:45:00",
-        image: "images/vegetarian_lasagna.png",
+        image: "vegetarian_lasagna.webp",
         ingredients: [
             "9 lasagna noodles",
             "2 cups ricotta cheese",
@@ -137,7 +137,7 @@ let recipeDatas = [
         title: "Shrimp Tacos with Lime Crema",
         author: "@romanteren",
         time: "2025-10-01 12:30:00",
-        image: "images/shrimp_tacos.png",
+        image: "shrimp_tacos.webp",
         ingredients: [
             "400g shrimp, peeled and deveined",
             "8 small corn tortillas",

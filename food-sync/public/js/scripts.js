@@ -1,6 +1,6 @@
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-export const storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public/";
+export const storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public";
 
 export async function sendAPIRequest(path, method, data = null) {
     try {

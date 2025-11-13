@@ -23,7 +23,7 @@
                 <form id="logout-form" method="POST" action="{{ route('logout') }}">
                     @csrf
 
-                    <a id="logout-form-submit" class="nav-link text-center" href="#">Sign Out</a>
+                    <a id="logout-form-submit" class="nav-link text-center" href="logout">Sign Out</a>
                 </form>
             </li>
         </ul>
@@ -35,7 +35,7 @@
     const logoutFormSubmit = document.getElementById("logout-form-submit");
 
     logoutFormSubmit.addEventListener('click', (event) => {
-        event.preventDefault(); 
+        event.preventDefault();
         logoutForm.submit();
     });
 </script>

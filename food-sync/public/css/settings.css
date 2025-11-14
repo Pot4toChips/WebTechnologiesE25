@@ -7,6 +7,8 @@
 }
 .setting-item.active {
     background-color: #e9ecef;
+    padding: 5px 10px 5px 10px;
+    border-radius: 10%;
     font-weight: 500;
     border-bottom: 3px solid #0d6efd;
 }

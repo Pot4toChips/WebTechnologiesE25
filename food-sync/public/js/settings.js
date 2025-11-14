@@ -1,7 +1,11 @@
+import { sendAPIRequest, storageURL } from "./scripts.js";
 document.addEventListener("DOMContentLoaded", setupSettingsPage);
 
-function setupSettingsPage() {
+async function setupSettingsPage() {
     const root = document.getElementById("settings") || document.body;
+
+    const userData = await sendAPIRequest("user", "GET");
+    console.log("Loaded user:", userData);
 
     const main = document.createElement("main");
     main.className = "content d-flex flex-column align-items-center justify-content-start overflow-x-hidden overflow-y-hidden col-10 m-0 p-0";
@@ -51,7 +55,7 @@ function setupSettingsPage() {
                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-between align-items-center">
                             <div>
                             <p class="mb-1 fw-semibold">Name</p>
-                            <small class="text-muted">John Doe</small>
+                            <small class="text-muted">${userData.name}</small>
                             </div>
                             <button>Edit</button>
                         </div>
@@ -59,7 +63,7 @@ function setupSettingsPage() {
                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-between align-items-center">
                             <div>
                             <p class="mb-1 fw-semibold">Email</p>
-                            <small class="text-muted">user@example.com</small>
+                            <small class="text-muted">${userData.email}</small>
                             </div>
                         </div>
 

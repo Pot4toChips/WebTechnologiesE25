@@ -10,7 +10,7 @@ export async function sendAPIRequest(path, method, data = null) {
                 'Content-Type': 'application/json',
                 'X-CSRF-Token': csrfToken,
             },
-            body: data ? JSON.stringify(data) : null
+            body: data ? (data instanceof FormData ? data : JSON.stringify(data)) : null
         });
 
         if (!response.ok) {

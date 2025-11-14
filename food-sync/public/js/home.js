@@ -1,6 +1,28 @@
 import { sendAPIRequest, storageURL } from "./scripts.js";
 
 const recipePosts = document.getElementById("recipe-posts");
+const recipePostCreatorForm = document.getElementById("recipe-post-creator-form");
+
+recipePostCreatorForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    let recipePostData = new FormData();
+
+    recipePostData.append("title", recipePostCreatorForm.querySelector("[name=title]").value);
+    recipePostData.append("image", recipePostCreatorForm.querySelector("[name=image]").files[0]);
+    recipePostData.append("ingredients", JSON.stringify(
+        recipePostCreatorForm.querySelector("[name=ingredients]").value.split('\n')
+    ));
+    recipePostData.append("instructions", JSON.stringify(
+        recipePostCreatorForm.querySelector("[name=instructions]").value.split('\n')
+    ));
+
+    console.log(recipePostData);
+
+    sendAPIRequest("recipe-posts/create-recipe-post", "POST", recipePostData);
+
+    recipePostCreatorForm.reset();
+});
 
 function timeSince(dateStr) {
     let date = new Date(dateStr);

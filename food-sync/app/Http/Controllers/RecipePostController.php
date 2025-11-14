@@ -7,6 +7,7 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class RecipePostController extends Controller
 {
@@ -40,7 +41,7 @@ class RecipePostController extends Controller
 
     public function createRecipePost(Request $request)
     {
-        dd('Reached here');
+        error_log("asd");
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -48,6 +49,8 @@ class RecipePostController extends Controller
             'ingredients' => 'required|array',
             'instructions' => 'required|array',
         ]);
+
+        error_log("fgh");
 
         $userId = auth()->id();
 

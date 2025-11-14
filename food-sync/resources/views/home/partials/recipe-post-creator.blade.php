@@ -7,7 +7,7 @@
         </h2>
         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#recipe-post-creator">
             <div class="accordion-body">
-                <form id="recipe-post-creator-form" method="POST" action="/api/recipe-posts/create-recipe-post">
+                <form id="recipe-post-creator-form" method="POST" action="">
                     @csrf
 
                     <div class="mb-3">
@@ -15,10 +15,10 @@
                         <input type="text" class="form-control" name="title" required>
                     </div>
 
-                    <label for="thumbnail" class="form-label">Thumbnail</label>
+                    <label for="image" class="form-label">Thumbnail</label>
                     <div class="input-group mb-3">
-                        <input id="recipe-thumbnail" class="form-control" type="file" name="thumbnail" accept="image/*" required>
-                        <button id="clear-thumbnail" class="btn btn-outline-secondary" type="button">Clear</button>
+                        <input id="recipe-image" class="form-control" type="file" name="image" accept="image/*" required>
+                        <button id="clear-image" class="btn btn-outline-secondary" type="button">Clear</button>
                     </div>
 
                     <div class="mb-3">
@@ -57,9 +57,9 @@
 </style>
 
 <script>
-    const recipeThumbnailInput = document.getElementById("recipe-thumbnail");
-    const clearThumbnailButton = document.getElementById("clear-thumbnail");
-    clearThumbnailButton.addEventListener("click", () => {
-        recipeThumbnailInput.value = "";
+    const recipeImageInput = document.getElementById("recipe-image");
+    const clearImageButton = document.getElementById("clear-image");
+    clearImageButton.addEventListener("click", () => {
+        recipeImageInput.value = "";
     });
 </script>

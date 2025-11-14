@@ -13,9 +13,9 @@ Route::get('/home', function () {
 })->middleware(['auth', 'verified'])->name('home');
 
 
-Route::get('/profile', function() {
+Route::get('/profile', function() { 
     return view('profile');
-});
+})->middleware(['auth', 'verified'])->name('home');
 
 Route::get('/settings', function () {
     return view('settings');

@@ -1,24 +1,19 @@
 .setting-item {
-    font-weight: 500;
-    padding: 0.625rem 0.75rem;
-    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
-
 .setting-item:hover {
-    background-color: #e7ebee;
-    text-decoration: none;
+    background-color: #f8f9fa;
 }
-
-.setting-item:hover p,
-.setting-item:hover i {
-  color: #0170e7;
-}
-
-
-
-i {
-    position: relative;
-    font-size: 1.4rem;
-    margin-right: 0.5rem;
+.setting-item.active {
+    background-color: #e9ecef;
     font-weight: 500;
+    border-bottom: 3px solid #0d6efd;
+}
+.setting-section {
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }

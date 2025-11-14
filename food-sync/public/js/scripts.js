@@ -22,7 +22,6 @@ export async function sendAPIRequest(path, method, data = null) {
 
         if (!response.ok) {
             console.error(`API error: ${response.status} ${response.statusText}`);
-            console.error(response.json());
             return null;
         }
         return await response.json();

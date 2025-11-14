@@ -42,16 +42,12 @@ class RecipePostController extends Controller
 
     public function createRecipePost(Request $request)
     {
-        error_log($request->file('image'));
-        
         $request->validate([
             'title' => 'required|string|max:255',
             'image' => 'required|image',
             'ingredients' => 'required',
             'instructions' => 'required',
         ]);
-
-        error_log($request->file('image'));
 
         $ingredients = json_decode($request->ingredients, true);
         $instructions = json_decode($request->instructions, true);
@@ -70,26 +66,14 @@ class RecipePostController extends Controller
         $supabaseKey = env(key: 'SUPABASE_SECRET');
         $uploadUrl = "{$supabaseUrl}/storage/v1/object/recipe_post_images/{$imageName}";
 
-        try {
-            $response = Http::withOptions([
-                'verify' => false
-            ])->withHeaders([
-                        'Authorization' => "Bearer {$supabaseKey}",
-                        'Content-Type' => 'image/webp',
-                        'x-upsert' => 'true'
-                    ])->send('POST', $uploadUrl, [
-                        'body' => $encodedImage->toString()
-                    ]);
-        } catch (\Exception $e) {
-            error_log($e);
-        }
-
-        if (!$response->successful()) {
-            return response()->json([
-                'error' => 'Failed to upload image to Supabase',
-                'details' => $response->body()
-            ], 500);
-        }
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer {$supabaseKey}",
+            'Content-Type' => 'image/webp',
+            'x-upsert' => 'true'
+        ])
+            ->send('POST', $uploadUrl, [
+                'body' => $encodedImage->toString()
+            ]);
 
         $recipe = RecipePost::create([
             'title' => $request->title,

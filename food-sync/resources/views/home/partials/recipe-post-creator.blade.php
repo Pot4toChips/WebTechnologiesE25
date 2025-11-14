@@ -7,7 +7,7 @@
         </h2>
         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#recipe-post-creator">
             <div class="accordion-body">
-                <form id="recipe-post-creator-form" method="POST" action="">
+                <form id="recipe-post-creator-form" method="POST" action="" enctype="multipart/form-data">
                     @csrf
 
                     <div class="mb-3">

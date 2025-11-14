@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\RecipePost;
-use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\WebpEncoder;
+use Illuminate\Support\Facades\Http;
 
 class RecipePostController extends Controller
 {
@@ -41,37 +42,61 @@ class RecipePostController extends Controller
 
     public function createRecipePost(Request $request)
     {
-        error_log("asd");
-
+        error_log($request->file('image'));
+        
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image|max:20480',
-            'ingredients' => 'required|array',
-            'instructions' => 'required|array',
+            'image' => 'required|image',
+            'ingredients' => 'required',
+            'instructions' => 'required',
         ]);
 
-        error_log("fgh");
+        error_log($request->file('image'));
+
+        $ingredients = json_decode($request->ingredients, true);
+        $instructions = json_decode($request->instructions, true);
 
         $userId = auth()->id();
 
         $uploadedFile = $request->file('image');
         $imageName = time() . '_' . pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
 
-        $image = Image::make($uploadedFile)
-            ->resize(1024, 1024, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })
-            ->encode('webp', 100);
+        $manager = new ImageManager(new Driver());
+        $image = $manager->read($uploadedFile);
+        $image->scaleDown(1024);
+        $encodedImage = $image->encode(new WebpEncoder(quality: 50));
 
-        Storage::disk('public')->put('recipe_post_images/' . $imageName, $image);
+        $supabaseUrl = env('SUPABASE_URL');
+        $supabaseKey = env(key: 'SUPABASE_SECRET');
+        $uploadUrl = "{$supabaseUrl}/storage/v1/object/recipe_post_images/{$imageName}";
+
+        try {
+            $response = Http::withOptions([
+                'verify' => false
+            ])->withHeaders([
+                        'Authorization' => "Bearer {$supabaseKey}",
+                        'Content-Type' => 'image/webp',
+                        'x-upsert' => 'true'
+                    ])->send('POST', $uploadUrl, [
+                        'body' => $encodedImage->toString()
+                    ]);
+        } catch (\Exception $e) {
+            error_log($e);
+        }
+
+        if (!$response->successful()) {
+            return response()->json([
+                'error' => 'Failed to upload image to Supabase',
+                'details' => $response->body()
+            ], 500);
+        }
 
         $recipe = RecipePost::create([
             'title' => $request->title,
             'author_id' => $userId,
             'image' => $imageName,
-            'ingredients' => $request->ingredients,
-            'instructions' => $request->instructions,
+            'ingredients' => $ingredients,
+            'instructions' => $instructions,
         ]);
 
         return response()->json($recipe, 201);

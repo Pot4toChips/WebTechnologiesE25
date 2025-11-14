@@ -1,13 +1,14 @@
-import { sendAPIRequest, storageURL } from "./scripts.js";
+import { sendAPIRequest, storageURL, csrfToken } from "./scripts.js";
 
 const recipePosts = document.getElementById("recipe-posts");
 const recipePostCreatorForm = document.getElementById("recipe-post-creator-form");
 
 recipePostCreatorForm.addEventListener("submit", (event) => {
     event.preventDefault();
-
+    
     let recipePostData = new FormData();
-
+    
+    recipePostData.append("_token", csrfToken);
     recipePostData.append("title", recipePostCreatorForm.querySelector("[name=title]").value);
     recipePostData.append("image", recipePostCreatorForm.querySelector("[name=image]").files[0]);
     recipePostData.append("ingredients", JSON.stringify(
@@ -16,8 +17,6 @@ recipePostCreatorForm.addEventListener("submit", (event) => {
     recipePostData.append("instructions", JSON.stringify(
         recipePostCreatorForm.querySelector("[name=instructions]").value.split('\n')
     ));
-
-    console.log(recipePostData);
 
     sendAPIRequest("recipe-posts/create-recipe-post", "POST", recipePostData);
 

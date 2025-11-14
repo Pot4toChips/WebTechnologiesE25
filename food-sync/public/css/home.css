@@ -12,10 +12,6 @@
     font-weight: 500;
 }
 
-#recipe-post-editor {
-    max-width: 900px;
-}
-
-img {
+.recipe-post img {
     width: 50%;
 }

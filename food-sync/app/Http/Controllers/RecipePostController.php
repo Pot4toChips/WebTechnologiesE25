@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\RecipePost;
+use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RecipePostController extends Controller
 {
@@ -38,19 +40,33 @@ class RecipePostController extends Controller
 
     public function createRecipePost(Request $request)
     {
+        dd('Reached here');
+
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|string',
+            'image' => 'required|image|max:20480',
             'ingredients' => 'required|array',
             'instructions' => 'required|array',
         ]);
 
         $userId = auth()->id();
 
+        $uploadedFile = $request->file('image');
+        $imageName = time() . '_' . pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
+
+        $image = Image::make($uploadedFile)
+            ->resize(1024, 1024, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })
+            ->encode('webp', 100);
+
+        Storage::disk('public')->put('recipe_post_images/' . $imageName, $image);
+
         $recipe = RecipePost::create([
             'title' => $request->title,
             'author_id' => $userId,
-            'image' => $request->image,
+            'image' => $imageName,
             'ingredients' => $request->ingredients,
             'instructions' => $request->instructions,
         ]);

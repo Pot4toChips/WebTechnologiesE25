@@ -4,9 +4,7 @@
     align-items: center;
     justify-items: start;
 
-    margin: 1rem;
-
-    width: 900px;
+    max-width: 900px;
 }
 
 .recipe-post {
@@ -14,6 +12,6 @@
     font-weight: 500;
 }
 
-img {
+.recipe-post img {
     width: 50%;
 }

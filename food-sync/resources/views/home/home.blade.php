@@ -7,6 +7,8 @@
 @endsection
 
 @section('content')
+    @include('home.partials.recipe-post-creator')    
+
     <div id="recipe-posts" class="container-fluid p-0 d-flex flex-column justify-content-center align-items-center"></div>
 @endsection
 

@@ -22,7 +22,7 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            @include('layouts.navigation')
+            @include('partials.navigation')
 
             <main class="content d-flex flex-column align-items-center justify-content-start overflow-x-hidden overflow-y-hidden col-10 m-0 p-0">
                 <div class="d-flex flex-column align-items-center justify-content-start overflow-auto w-100 px-4 pt-4">

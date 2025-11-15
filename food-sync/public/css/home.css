@@ -4,12 +4,9 @@
     align-items: center;
     justify-items: start;
 
-    max-width: 900px;
-}
-
-.recipe-post {
-    color: black;
     font-weight: 500;
+    
+    max-width: 900px;
 }
 
 .recipe-post img {

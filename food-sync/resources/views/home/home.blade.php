@@ -10,6 +10,8 @@
     @include('home.partials.recipe-post-creator')    
 
     <div id="recipe-posts" class="container-fluid p-0 d-flex flex-column justify-content-center align-items-center"></div>
+    
+    @include('home.partials.recipe-post-placeholder')
 @endsection
 
 @section('js')

@@ -1,6 +1,7 @@
 import { sendAPIRequest, timeSince, storageURL, csrfToken, executeAsyncSafe, showToastMessage } from "./scripts.js";
 
 const recipePosts = document.getElementById("recipe-posts");
+const recipePostTemplate = document.getElementById("recipe-post-template");
 const recipePostPlaceholder = document.getElementById("recipe-post-placeholder");
 const recipePostCreatorForm = document.getElementById("recipe-post-creator-form");
 recipePostCreatorForm.addEventListener("submit", async function (event) {
@@ -11,34 +12,21 @@ recipePostCreatorForm.addEventListener("submit", async function (event) {
 
 function renderRecipePost(recipePostData) {
     let recipePost = document.createElement("article");
-    recipePost.className = "recipe-post content-card d-flex flex-column align-items-start justify-content-start mb-3";
-    recipePost.innerHTML = `
-        <div class="recipe-post-header d-flex flex-row align-items-center justify-content-between m-0 w-100">
-        <p class="m-0">${recipePostData.title}</p>
-            <div class="d-flex flex-row align-items-center justify-content-center">
-                <a class="text-secondary m-0">${recipePostData.author}</a>
-                <p class="text-secondary my-0 mx-1">•</p>
-                <p class="text-secondary m-0">${timeSince(recipePostData.time)}</p>
-            </div>
-        </div>
-        <hr class="border-2 w-100 my-2">
-        <div class="d-flex flex-row align-items-start justify-content-start w-100 my-2">
-            <img class="rounded me-3" src="${storageURL}/recipe_post_images/${recipePostData.image}" alt="Image of ${recipePostData.title}">
-            <div class="d-flex flex-column align-items-start justify-content-start h-100">
-                <p class="m-0">Ingredients</p>
-                <ul class="m-0">
-                    ${recipePostData.ingredients.map(i => `<li>${i}</li>`).join("")}
-                </ul>
-            </div>
-        </div>
-        <hr class="border-2 w-100 my-2">
-        <div class="d-flex flex-column align-items-start justify-content-start">
-            <p class="m-0">Instructions</p>
-            <ul class="m-0">
-                ${recipePostData.instructions.map(i => `<li>${i}</li>`).join("")}
-            </ul>
-        </div>
-    `
+    let templateHTML = recipePostTemplate.innerHTML;
+
+    let ingredientsHTML = recipePostData.ingredients.map(i => `<li>${i}</li>`).join("");
+    let instructionsHTML = recipePostData.instructions.map(i => `<li>${i}</li>`).join("")
+
+    // Without a regex, it only replaces the first occurrence
+    let recipePostHTML = templateHTML
+        .replace(/\[TITLE\]/g, recipePostData.title)
+        .replace(/\[AUTHOR\]/g, recipePostData.author)
+        .replace(/\[TIME\]/g, timeSince(recipePostData.time))
+        .replace(/\[IMAGE_URL\]/g, `${storageURL}/recipe_post_images/${recipePostData.image}`)
+        .replace(/\[INGREDIENTS\]/g, ingredientsHTML)
+        .replace(/\[INSTRUCTIONS\]/g, instructionsHTML);
+    recipePost.innerHTML = recipePostHTML;
+
     return recipePost;
 }
 

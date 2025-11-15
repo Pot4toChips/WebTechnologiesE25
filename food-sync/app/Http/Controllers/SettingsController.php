@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class SettingsController extends Controller
 {
@@ -14,5 +17,62 @@ class SettingsController extends Controller
             'name' => $user->name,
             'email' => $user->email,
         ]);
+    }
+
+    public function changeName(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $user = $request->user();
+        $user->name = $request->name;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Name updated successfully',
+            'name' => $user->name,
+        ]);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|confirmed',
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'error' => 'Current password is incorrect.'
+            ], 422);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'message' => 'Password updated successfully'
+        ]);
+    }
+
+    public function deleteUser(Request $request)
+    {
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
+        ]);
+
+        $user = $request->user();
+
+        Auth::logout();
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return Redirect::to('/');
     }
 }

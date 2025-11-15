@@ -19,6 +19,9 @@ Route::get('/settings', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/api/user', [SettingsController::class, 'getUserData']);
+    Route::post('/api/change-name', [SettingsController::class, 'changeName']);
+    Route::post('/api/change-password', [SettingsController::class, 'changePassword']);
+    Route::post('/api/delete-user', [SettingsController::class, 'deleteUser']);
 });
 
 Route::middleware('auth')->group(function () {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>@yield('title') </title>
+  <title> Profile </title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,7 +60,7 @@
             <!-- Username Row -->
             <div class="row w-100 mb-3 align-items-center">
               <div class="col">
-                <h3 id="profile-username" class="fw-bold mb-0">Username</h3>
+                @yield("name")
                 <small id="profile-bio" class="text-muted">Short profile description</small>
               </div>
 
@@ -141,7 +141,7 @@
             <!-- posts Container row -->
             <div class="row mt-2">
               <div class="col" id="posts-container" aria-live="polite">
-                <!-- JS will fill posts here -->
+                 @yield('posts')    
               </div>
             </div>
 

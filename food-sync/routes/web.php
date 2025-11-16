@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ExSettingsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipePostController;
+use App\Http\Controllers\settingsContoller;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -12,20 +14,17 @@ Route::get('/home', function () {
     return view('home.home');
 })->middleware(['auth', 'verified'])->name('home');
 
-
-Route::get('/profile', function() { 
-    return view('profile');
-})->middleware(['auth', 'verified'])->name('home');
-
 Route::get('/settings', function () {
     return view('settings');
 })->middleware(['auth', 'verified'])->name('settings');
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware('auth')->prefix('profile')->name('profile.')->group(function () {
+    Route::get('/', [ProfileController::class, 'load'])  ->name('load');
+    Route::get('/edit', [ProfileController::class, 'edit']) ->middleware('verified')->name('edit');
+    Route::patch('/edit', [ProfileController::class, 'update']) ->middleware('verified')->name('update');
+    Route::delete('/destroy', [ExSettingsController::class, 'destroy'])->name('profile.destroy');
+
 });
 
 // API Routes

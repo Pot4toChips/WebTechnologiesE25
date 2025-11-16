@@ -8,22 +8,35 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\User;
+use App\Models\RecipePost;
+
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Display the user's profile
      */
-    public function edit(Request $request): View
+    public function load(Request $request): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+      $id = Auth::id();
+      $name = User::where('id', $id)->value('name');
+      $posts = RecipePost::where('author_id', $id)
+      ->orderBy('created_at', 'desc')
+      ->get();
+        
+        return view('profile', compact('name', 'posts'));
     }
 
     /**
      * Update the user's profile information.
      */
+    public function edit(Request $request): View
+    {
+      $user = Auth::user();
+    return view('profile.edit', compact('user'));
+    }
+
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
@@ -37,24 +50,4 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
-    }
 }

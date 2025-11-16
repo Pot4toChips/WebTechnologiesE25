@@ -51,29 +51,11 @@ class RecipePostController extends Controller
 
         $ingredients = json_decode($request->ingredients, true);
         $instructions = json_decode($request->instructions, true);
-
+        
         $userId = auth()->id();
 
         $uploadedFile = $request->file('image');
-        $imageName = time() . '_' . pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
-
-        $manager = new ImageManager(new Driver());
-        $image = $manager->read($uploadedFile);
-        $image->scaleDown(1024);
-        $encodedImage = $image->encode(new WebpEncoder(quality: 50));
-
-        $supabaseUrl = env('SUPABASE_URL');
-        $supabaseKey = env(key: 'SUPABASE_SECRET');
-        $uploadUrl = "{$supabaseUrl}/storage/v1/object/recipe_post_images/{$imageName}";
-
-        $response = Http::withHeaders([
-            'Authorization' => "Bearer {$supabaseKey}",
-            'Content-Type' => 'image/webp',
-            'x-upsert' => 'true'
-        ])
-            ->send('POST', $uploadUrl, [
-                'body' => $encodedImage->toString()
-            ]);
+        $imageName = $this->storeImage($uploadedFile);
 
         $recipe = RecipePost::create([
             'title' => $request->title,
@@ -84,5 +66,29 @@ class RecipePostController extends Controller
         ]);
 
         return response()->json($recipe, 201);
+    }
+
+    public function storeImage($uploadedFile)
+    {
+        $imageName = time() . '_' . pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
+
+        $manager = new ImageManager(new Driver());
+        $image = $manager->read($uploadedFile);
+        $image->scaleDown(1024);
+        $encodedImage = $image->encode(new WebpEncoder(quality: 50));
+
+        $supabaseUrl = env('SUPABASE_URL');
+        $supabaseKey = env('SUPABASE_SECRET');
+        $uploadUrl = "{$supabaseUrl}/storage/v1/object/recipe_post_images/{$imageName}";
+
+        Http::withHeaders([
+            'Authorization' => "Bearer {$supabaseKey}",
+            'Content-Type' => 'image/webp',
+            'x-upsert' => 'true'
+        ])->send('POST', $uploadUrl, [
+            'body' => $encodedImage->toString()
+        ]);
+
+        return $imageName;
     }
 }

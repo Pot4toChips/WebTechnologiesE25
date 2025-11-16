@@ -32,6 +32,21 @@
         </div>
     </div>
 
+    <div id="screen-blocker" class="position-fixed justify-content-center align-items-center top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-none" style="z-index: 1000; display: none;">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Updating...</span>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+        <div id="toast-message" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toast-text" class="toast-body"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     @yield('js')
 
     <script src="js/scripts.js" type="module"></script>

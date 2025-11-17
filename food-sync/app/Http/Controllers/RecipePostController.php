@@ -55,7 +55,7 @@ class RecipePostController extends Controller
         $userId = auth()->id();
 
         $uploadedFile = $request->file('image');
-        $imageName = $this->storeImage($uploadedFile);
+        $imageName = $this->storeImage($uploadedFile, "recipe_post_images");
 
         $recipe = RecipePost::create([
             'title' => $request->title,
@@ -68,7 +68,7 @@ class RecipePostController extends Controller
         return response()->json($recipe, 201);
     }
 
-    public function storeImage($uploadedFile)
+    public function storeImage($uploadedFile, $folder)
     {
         $imageName = time() . '_' . pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
 
@@ -79,7 +79,7 @@ class RecipePostController extends Controller
 
         $supabaseUrl = env('SUPABASE_URL');
         $supabaseKey = env('SUPABASE_SECRET');
-        $uploadUrl = "{$supabaseUrl}/storage/v1/object/recipe_post_images/{$imageName}";
+        $uploadUrl = "{$supabaseUrl}/storage/v1/object/{$folder}/{$imageName}";
 
         Http::withHeaders([
             'Authorization' => "Bearer {$supabaseKey}",

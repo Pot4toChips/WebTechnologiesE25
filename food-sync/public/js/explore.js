@@ -1,4 +1,7 @@
 
+const SUPABASE_URL = "https://vvtmkzsrflnaqphsxxal.supabase.co";
+const SUPABASE_BUCKET = "recipe_post_images";
+ 
 (function () {
   const feed = document.getElementById('feed');
   const sentinel = document.getElementById('sentinel');
@@ -45,7 +48,6 @@
           onload="console.debug('Image loaded', this.src);"
         >
       </div>
-      <div class="small text-muted mt-2">URL: ${post.image_url}</div>
       ` : `<div class="small text-muted mt-2">No image</div>`}
     `;
     return recipePost;
@@ -53,10 +55,23 @@
 
   async function fetchPosts(pageNumber, pageSize) {
     // Try to load posts from the backend API once and page client-side
-    if (window.__explorePostsCache) {
-      const start = pageNumber * pageSize;
-      return window.__explorePostsCache.slice(start, start + pageSize);
+  if (window.__explorePostsCache) {
+    const cache = window.__explorePostsCache;
+    const total = cache.length;
+
+  // If not enough posts to fill the page → loop the posts
+    if (total > 0) {
+      const results = [];
+      for (let i = 0; i < pageSize; i++) {
+        const index = (pageNumber * pageSize + i) % total; 
+        results.push(cache[index]);
+      }
+      return results;
     }
+
+    return []; // no posts at all
+}
+
 
     try {
       const res = await fetch('/api/recipe-posts/get-recipe-posts', {
@@ -70,14 +85,23 @@
       const data = await res.json();
       console.debug('Explore: fetched posts from API', data);
 
-      // Normalize and cache
-      const mapped = data.map((r, i) => ({
-        id: r.id ?? `post-${i + 1}`,
-        title: r.title ?? `Recipe ${i + 1}`,
-        author: r.author ?? r.name ?? 'Unknown',
-        time: timeAgo(r.time ?? r.updated_at ?? r.updatedAt ?? new Date().toISOString()),
-        image_url: r.image_url ?? null,
-      }));
+      
+      const mapped = data.map((r, i) => {
+        const cleanPath = (r.image_url || "")
+          .replace(/^\/+/, "")         
+          .replace(/^images\//, "")    
+          .replace(/\/{2,}/g, "/");   
+         return {
+             id: r.id ?? `post-${i + 1}`,
+             title: r.title ?? `Recipe ${i + 1}`,
+             author: r.author ?? r.name ?? 'Unknown',
+             time: timeAgo(r.time ?? r.updated_at ?? r.updatedAt ?? new Date().toISOString()),
+
+             image_url: cleanPath
+              ? `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${cleanPath}`
+             : null,
+             };
+        });
 
       window.__explorePostsCache = mapped;
       console.debug('Explore: mapped posts', mapped.slice(0, 10));
@@ -139,10 +163,8 @@
 
       const posts = await fetchPosts(page, PAGE_SIZE);
       if (!posts || posts.length === 0) {
-        done = true;
-        sentinel.textContent = 'No more posts';
-        observer.unobserve(sentinel);
         placeholderNodes.forEach(n => n.remove());
+        return;
       } else {
         for (let i = 0; i < posts.length; i++) {
           const p = posts[i];

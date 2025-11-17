@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\User;
 use App\Models\RecipePost;
-
-
+ 
 class ExSettingsController extends Controller
 {
   /**

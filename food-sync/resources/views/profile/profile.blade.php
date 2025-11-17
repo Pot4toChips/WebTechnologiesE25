@@ -1,5 +1,10 @@
-@extends('layouts.profileLayout')
+@extends('profile.layout')
  
+@section('css')
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/profile.css">
+@endsection
+
 @php
     $storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public";
     $imagePath = $userProfile->image; 
@@ -29,9 +34,6 @@
  <h4 class="mb-0">{{$name}}'s Posts</h4>
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="css/profile.css">
-@endsection
 
 @section('posts')
 <div id="posts-container">

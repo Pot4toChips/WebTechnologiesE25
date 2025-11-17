@@ -16,7 +16,7 @@ class UserProfile extends Model
     'description',
     'bio',
     'image',
-   ];
+   ]; 
 
    public function user()
    {

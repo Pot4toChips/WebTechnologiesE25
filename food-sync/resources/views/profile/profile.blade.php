@@ -5,6 +5,11 @@ $storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public
 $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
 @endphp 
 
+<script>
+    console.log("Image URL:", @json($imageURL));
+</script>
+
+
 @section('css')
     <link rel="stylesheet" href="css/profile.css">
     <link rel="stylesheet" href="css/profile.css">
@@ -36,10 +41,14 @@ $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
 @section('posts')
 <div id="posts-container">
     @foreach($posts as $post)
+    @php
+   $recipeURL = $storageURL . '/recipe_post_images/' . $post->image;
+    @endphp 
+
         <div class="post-card" id="post-{{ $post->id }}" data-post-id="{{ $post->id }}">
             <div class="row g-0">
                 <div class="col-12 col-md-5">
-                    <img src="{{ $post->image }}" alt="{{ $post->title }}" class="post-media">
+                    <img src="{{ $recipeURL }}" alt="{{ $post->title }}" class="post-media">
                 </div>
                 <div class="col-12 col-md-7">
                     <div style="padding:14px;">

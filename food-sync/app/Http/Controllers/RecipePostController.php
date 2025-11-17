@@ -27,11 +27,18 @@ class RecipePostController extends Controller
             ->orderBy('recipe_posts.updated_at', 'desc')
             ->get()
             ->map(function ($recipe) {
+                $imageUrl = null;
+                if (!empty($recipe->image)) {
+                    // Construct local image URL from public/images folder
+                    $imageUrl = '/images/' . ltrim($recipe->image, '/');
+                }
+
                 return [
                     'title' => $recipe->title,
                     'author' => $recipe->author,
                     'time' => $recipe->updated_at,
                     'image' => $recipe->image,
+                    'image_url' => $imageUrl,
                     'ingredients' => json_decode($recipe->ingredients, true),
                     'instructions' => json_decode($recipe->instructions, true),
                 ];

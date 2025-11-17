@@ -1,16 +1,14 @@
 @extends('profile.layout')
  
+@php
+$storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public";
+$imageURL = $storageURL . '/profile_images/' . $userProfile->image;
+@endphp 
+
 @section('css')
     <link rel="stylesheet" href="css/profile.css">
     <link rel="stylesheet" href="css/profile.css">
 @endsection
-
-@php
-    $storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public";
-    $imagePath = $userProfile->image; 
-    $imagePath = ltrim($imagePath, '/'); 
-    $imageURL = "$storageURL/$imagePath";
-@endphp 
 
 @section('name1')
   <h3 id="profile-username" class="fw-bold mb-0">{{$name}}</h3>

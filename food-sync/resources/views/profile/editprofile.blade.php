@@ -1,12 +1,9 @@
 	@extends('layouts.app')
  
 @php
-    $storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public";
-    $imagePath = $userProfile->image; 
-    $imagePath = ltrim($imagePath, '/'); // just in case
-    $imageURL = "$storageURL/$imagePath";
+$storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public";
+$imageURL = $storageURL . '/profile_images/' . $userProfile->image;
 @endphp 
-
 
 	@section('title', 'Edit Profile')
 

@@ -23,8 +23,6 @@ Route::middleware('auth')->prefix('profile')->name('profile.')->group(function (
     Route::get('/', [ProfileController::class, 'load'])  ->name('load');
     Route::get('/edit', [ProfileController::class, 'edit']) ->middleware('verified')->name('edit');
     Route::patch('/edit', [ProfileController::class, 'update']) ->middleware('verified')->name('update');
-    Route::delete('/destroy', [ExSettingsController::class, 'destroy'])->name('profile.destroy');
-
 });
 
 // API Routes

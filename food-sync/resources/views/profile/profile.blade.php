@@ -1,9 +1,33 @@
 @extends('layouts.profileLayout')
+ 
+@php
+    $storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public";
+    $imagePath = $userProfile->image; 
+    $imagePath = ltrim($imagePath, '/'); 
+    $imageURL = "$storageURL/$imagePath";
+@endphp 
 
-@section('name')
+@section('name1')
   <h3 id="profile-username" class="fw-bold mb-0">{{$name}}</h3>
 @endsection
 
+@section('profile_description')
+     <small id="profile-bio" class="text-muted">{{$userProfile->description}}</small>
+@endsection
+
+@section('image')
+  <img id="profile-avatar" src="{{ $imageURL }}" alt="Profile avatar" class="rounded-circle profile-avatar">
+@endsection
+
+@section('bio')
+      <p id="profile-about" class="text-muted mb-0">{{$userProfile->bio}}.</p>
+@endsection
+
+
+
+@section('name2')
+ <h4 class="mb-0">{{$name}}'s Posts</h4>
+@endsection
 
 @section('css')
     <link rel="stylesheet" href="css/profile.css">

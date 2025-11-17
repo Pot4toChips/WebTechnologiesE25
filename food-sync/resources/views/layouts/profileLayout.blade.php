@@ -60,8 +60,8 @@
             <!-- Username Row -->
             <div class="row w-100 mb-3 align-items-center">
               <div class="col">
-                @yield("name")
-                <small id="profile-bio" class="text-muted">Short profile description</small>
+                @yield("name1")
+                @yield('profile_description') 
               </div>
 
               <div class="col-auto text-end">
@@ -81,7 +81,7 @@
             <!-- Stats row -->
             <div class="row align-items-center gy-3">
               <div class="col-auto text-center">
-                <img id="profile-avatar" src="images/monke.png" alt="Profile avatar" class="rounded-circle profile-avatar">
+                @yield('image')
                 <div><button id="subscribe-btn" class="subscribe-button mt-2" type="button">Subscribe</button></div>
               </div>
 
@@ -111,7 +111,7 @@
             <div class="row mb-0">
               <div class="col">
                 <h5 class="mb-1">About</h5>
-                <p id="profile-about" class="text-muted mb-0">A short about text.</p>
+                 @yield('bio')
               </div>
             </div>
 
@@ -121,7 +121,7 @@
           <section id="posts-panel" class="panel mt-4">
             <div class="row align-items-center mb-3">
               <div class="col">
-                <h4 class="mb-0">User Posts</h4>
+                 @yield('name2')    
               </div>
 
               <div class="col-auto text-end">

@@ -1,6 +1,7 @@
 
 const SUPABASE_URL = "https://vvtmkzsrflnaqphsxxal.supabase.co";
 const SUPABASE_BUCKET = "recipe_post_images";
+import { timeSince } from './scripts.js'
  
 (function () {
   const feed = document.getElementById('feed');
@@ -12,21 +13,6 @@ const SUPABASE_BUCKET = "recipe_post_images";
   let page = 0;
   let isLoading = false;
   let done = false;
-
-  function timeAgo(timestamp) {
-    try {
-      const then = new Date(timestamp);
-      const now = new Date();
-      const diff = Math.floor((now - then) / 1000); // seconds
-      if (isNaN(diff)) return timestamp;
-      if (diff < 60) return `${diff}s`;
-      if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-      if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-      return `${Math.floor(diff / 86400)}d`;
-    } catch (e) {
-      return timestamp;
-    }
-  }
 
   function makePostNode(post) {
     let recipePost = document.createElement("article");
@@ -95,7 +81,7 @@ const SUPABASE_BUCKET = "recipe_post_images";
              id: r.id ?? `post-${i + 1}`,
              title: r.title ?? `Recipe ${i + 1}`,
              author: r.author ?? r.name ?? 'Unknown',
-             time: timeAgo(r.time ?? r.updated_at ?? r.updatedAt ?? new Date().toISOString()),
+             time: timeSince(r.time ?? r.updated_at ?? r.updatedAt ?? new Date().toISOString()),
 
              image_url: cleanPath
               ? `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${cleanPath}`

@@ -1,24 +1,32 @@
 
+const SUPABASE_URL = "https://vvtmkzsrflnaqphsxxal.supabase.co";
+const SUPABASE_BUCKET = "recipe_post_images";
+ 
 (function () {
   const feed = document.getElementById('feed');
   const sentinel = document.getElementById('sentinel');
   const loading = document.getElementById('loader');
 
-  // Simulated image pool 
-  const images = [
-    'images/chicken_alfredo.png',
-    'images/beef_stir_fry.png',
-    'images/vegetarian_lasagna.png',
-    'images/shrimp_tacos.png',
-    'images/postex.png',
-    'images/postex2.png',
-    'images/postex3.png'
-  ];
 
   const PAGE_SIZE = 6;
   let page = 0;
   let isLoading = false;
   let done = false;
+
+  function timeAgo(timestamp) {
+    try {
+      const then = new Date(timestamp);
+      const now = new Date();
+      const diff = Math.floor((now - then) / 1000); // seconds
+      if (isNaN(diff)) return timestamp;
+      if (diff < 60) return `${diff}s`;
+      if (diff < 3600) return `${Math.floor(diff / 60)}m`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+      return `${Math.floor(diff / 86400)}d`;
+    } catch (e) {
+      return timestamp;
+    }
+  }
 
   function makePostNode(post) {
     let recipePost = document.createElement("article");
@@ -33,52 +41,103 @@
         </div>
       </div>
       <hr class="border-2 w-100 my-2">
-      <div class="d-flex flex-row align-items-start justify-content-start mt-2 w-100 justify-content-center">
-        <img class="w-100 rounded" src="${post.image}" alt="Image of ${post.title}" style="height:280px;object-fit:cover;">
+      ${post.image_url? `
+      <div class="d-flex flex-row align-items-start justify-content-start mt-2 w-100 justify-content-center image-container">
+        <img class="w-100 rounded" src="${post.image_url}" alt="Image of ${post.title}" style="height:280px;object-fit:cover;" 
+          onerror="console.error('Image load error', this.src); this.classList.add('img-error'); this.insertAdjacentHTML('afterend', '<div class=\'text-danger small mt-2\'>Image failed to load</div>');"
+          onload="console.debug('Image loaded', this.src);"
+        >
       </div>
+      ` : `<div class="small text-muted mt-2">No image</div>`}
     `;
     return recipePost;
   }
 
-  function fetchPosts(pageNumber, pageSize) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        if (pageNumber >= 5) {
-          resolve([]);
-          return;
-        }
+  async function fetchPosts(pageNumber, pageSize) {
+    // Try to load posts from the backend API once and page client-side
+  if (window.__explorePostsCache) {
+    const cache = window.__explorePostsCache;
+    const total = cache.length;
 
-        const authorNames = [
-          "@richardtivolt", "@pauldonici", "@hubageller", "@romanteren", "@foodiequeen", "@chefmax", "@sarahcooks", "@tastytom", "@veggievibe", "@spicyjane", "@bakerbob", "@grillguy", "@saucysue", "@noodleking", "@sweetpea"
-        ];
-        const imageToRecipe = {
-          "chicken_alfredo": "Chicken Alfredo",
-          "beef_stir_fry": "Beef Stir Fry",
-          "vegetarian_lasagna": "Vegetarian Lasagna",
-          "shrimp_tacos": "Shrimp Tacos",
-          "monke": "Monke Special",
-          "postex": "Banana Cake",
-          "postex2": "Pasta",
-          "postex3": "Vareniki"
-        };
-        const items = Array.from({ length: pageSize }, (_, i) => {
-          const n = pageNumber * pageSize + i + 1;
-          const author = authorNames[Math.floor(Math.random() * authorNames.length)];
-          const imagePath = images[n % images.length];
-          const imageKey = imagePath.split('/').pop().replace('.png', '');
-          const title = imageToRecipe[imageKey] || `Recipe ${n}`;
-          return {
-            id: `post-${n}`,
-            title,
-            author,
-            time: `${(n % 60) + 1}m`,
-            image: imagePath,
-            alt: `Photo of ${title}`,
-          };
+  // If not enough posts to fill the page → loop the posts
+    if (total > 0) {
+      const results = [];
+      for (let i = 0; i < pageSize; i++) {
+        const index = (pageNumber * pageSize + i) % total; 
+        results.push(cache[index]);
+      }
+      return results;
+    }
+
+    return []; // no posts at all
+}
+
+
+    try {
+      const res = await fetch('/api/recipe-posts/get-recipe-posts', {
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      console.debug('Explore: fetched posts from API', data);
+
+      
+      const mapped = data.map((r, i) => {
+        const cleanPath = (r.image_url || "")
+          .replace(/^\/+/, "")         
+          .replace(/^images\//, "")    
+          .replace(/\/{2,}/g, "/");   
+         return {
+             id: r.id ?? `post-${i + 1}`,
+             title: r.title ?? `Recipe ${i + 1}`,
+             author: r.author ?? r.name ?? 'Unknown',
+             time: timeAgo(r.time ?? r.updated_at ?? r.updatedAt ?? new Date().toISOString()),
+
+             image_url: cleanPath
+              ? `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${cleanPath}`
+             : null,
+             };
         });
-        resolve(items);
-      }, 600 + Math.random() * 400);
-    });
+
+      window.__explorePostsCache = mapped;
+      console.debug('Explore: mapped posts', mapped.slice(0, 10));
+      const start = pageNumber * pageSize;
+      return mapped.slice(start, start + pageSize);
+    } catch (err) {
+      console.warn('Failed to fetch posts from API, falling back to local generator', err);
+
+      // Fallback to client-side generated posts (keeps UX functional)
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          if (pageNumber >= 5) {
+            resolve([]);
+            return;
+          }
+
+          const authorNames = [
+            "@richardtivolt", "@pauldonici", "@hubageller", "@romanteren", "@foodiequeen", "@chefmax", "@sarahcooks", "@tastytom", "@veggievibe", "@spicyjane", "@bakerbob", "@grillguy", "@saucysue", "@noodleking", "@sweetpea"
+          ];
+
+          const items = Array.from({ length: pageSize }, (_, i) => {
+            const n = pageNumber * pageSize + i + 1;
+            const author = authorNames[Math.floor(Math.random() * authorNames.length)];
+            const title = `Recipe ${n}`;
+            return {
+              id: `post-${n}`,
+              title,
+              author,
+              time: `${(n % 60) + 1}m`,
+            };
+          });
+
+          resolve(items);
+        }, 600 + Math.random() * 400);
+      });
+    }
   }
 
   async function loadMore() {
@@ -104,10 +163,8 @@
 
       const posts = await fetchPosts(page, PAGE_SIZE);
       if (!posts || posts.length === 0) {
-        done = true;
-        sentinel.textContent = 'No more posts';
-        observer.unobserve(sentinel);
         placeholderNodes.forEach(n => n.remove());
+        return;
       } else {
         for (let i = 0; i < posts.length; i++) {
           const p = posts[i];

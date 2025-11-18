@@ -12,8 +12,9 @@
 .recipe-post {
     font-weight: 500;
     background-color: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
+    max-width: 900px;
 }
 
-img {
+.recipe-post img {
     width: 50%;
 }

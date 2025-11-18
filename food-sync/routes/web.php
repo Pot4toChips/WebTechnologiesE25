@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExSettingsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipePostController;
 use App\Http\Controllers\SettingsController;
@@ -7,10 +8,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+}); 
 
 Route::get('/home', function () {
-    return view('home');
+    return view('home.home');
 })->middleware(['auth', 'verified'])->name('home');
 
 Route::get('/settings', function () {
@@ -25,10 +26,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/send-feedback', [SettingsController::class, 'sendFeedback']);
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// Profile Routes
+Route::middleware('auth')->prefix('profile')->name('profile.')->group(function () {
+    Route::get('/', [ProfileController::class, 'load'])  ->name('load');
+    Route::get('/edit', [ProfileController::class, 'edit']) ->middleware('verified')->name('edit');
+    Route::patch('/edit', [ProfileController::class, 'update']) ->middleware('verified')->name('update');
 });
 
 // API Routes

@@ -7,7 +7,14 @@
 @endsection
 
 @section('content')
+    @include('home.partials.recipe-post-creator')    
+
+    <script type="text/template" id="recipe-post-template">
+        @include('home.partials.recipe-post-template')
+    </script>
     <div id="recipe-posts" class="container-fluid p-0 d-flex flex-column justify-content-center align-items-center"></div>
+    
+    @include('home.partials.recipe-post-placeholder')
 @endsection
 
 @section('js')

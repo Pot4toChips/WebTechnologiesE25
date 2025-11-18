@@ -60,19 +60,20 @@ class SettingsController extends Controller
 
     public function deleteUser(Request $request)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        $request->validate([
+            'password' => 'required',
         ]);
 
         $user = $request->user();
 
-        Auth::logout();
-
+        Auth::guard('web')->logout();
+        
         $user->delete();
 
         $request->session()->invalidate();
-        $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return response()->json([
+            'message' => 'User successfully deleted.'
+        ]);
     }
 }

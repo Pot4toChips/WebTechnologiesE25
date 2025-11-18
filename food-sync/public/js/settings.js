@@ -1,10 +1,12 @@
 import { sendAPIRequest, storageURL } from "./scripts.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-    await setupSettingsPage(); 
+    await setupSettingsPage();
 
     const item = document.querySelector(".setting-item");
     if (item) item.click(); // SELECT THE FIRST MENU TIEM
+
+    localStorage.getItem('theme') ? document.getElementById(`theme-${localStorage.getItem("theme").toLowerCase()}-radio`).checked = true : "";
 });
 
 async function setupSettingsPage() {
@@ -52,13 +54,13 @@ async function setupSettingsPage() {
         wrapper.appendChild(content);
 
         const sections = {
-            "account": 
+            "account":
                 `<div class="d-flex flex-column align-items-center justify-content-start overflow-auto w-100 px-4 pt-4">
                         <div class="w-50">
                             <div class="mb-3 border-bottom pb-2 d-flex justify-content-between align-items-center">
                                 <div>
                                     <p class="mb-1 fw-semibold">Name</p>
-                                    <small class="text-muted">${userData.name}</small>
+                                    <small>${userData.name}</small>
                                 </div>
                                 <button class="btn btn-primary change-name-btn">Change</button>
                             </div>
@@ -66,14 +68,14 @@ async function setupSettingsPage() {
                             <div class="mb-3 border-bottom pb-2 d-flex justify-content-between align-items-center">
                                 <div>
                                     <p class="mb-1 fw-semibold">Email</p>
-                                    <small class="text-muted">${userData.email}</small>
+                                    <small>${userData.email}</small>
                                 </div>
                             </div>
 
                            <div class="mb-3 border-bottom pb-2 d-flex justify-content-between align-items-center">
                                 <div>
                                     <p class="mb-1 fw-semibold">Password</p>
-                                    <small class="text-muted">********</small>
+                                    <small>********</small>
                                 </div>
                                 <button class="btn btn-primary change-password-btn">Change</button>
                             </div>
@@ -81,64 +83,82 @@ async function setupSettingsPage() {
                             <div class="pt-3 d-flex justify-content-between align-items-center">
                                 <div>
                                     <p class="mb-1 fw-semibold text-danger">Delete Account</p>
-                                    <small class="text-muted">This action is permanent and irreversible.</small>
+                                    <small>This action is permanent and irreversible.</small>
                                 </div>
                                 <button class="btn btn-danger delete-user-btn">Delete</button>
                             </div>
                         </div>
                 </div>`,
 
-            "preferences": 
+            "preferences":
                 `<div class="d-flex flex-column align-items-center justify-content-start overflow-auto w-100 px-4 pt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3 w-50 py-2 border-bottom">
+
                             <label class="form-label fw-semibold mb-0">Theme</label>
+
+                            <input type="radio" name="theme" id="theme-system-radio" hidden checked>
+                            <input type="radio" name="theme" id="theme-light-radio" hidden>
+                            <input type="radio" name="theme" id="theme-dark-radio" hidden>
+
                             <div class="dropdown">
                                 <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-theme-btn">
-                                    Light
+                                    ${activeTheme}
                                 </button>
+
                                 <ul class="dropdown-menu w-25">
-                                    <li><a class="dropdown-item theme-option" href="#" data-theme="Light">Light</a></li>
-                                    <li><a class="dropdown-item theme-option" href="#" data-theme="Dark">Dark</a></li>
+                                    <li><a class="dropdown-item theme-option" href="#" value="Light">Light</a></li>
+                                    <li><a class="dropdown-item theme-option" href="#" value="Dark">Dark</a></li>
                                 </ul>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mb-3 w-50 py-2 border-bottom">
-                            <label class="form-label fw-semibold">Measurement Units</label>
+                            <label class="form-label fw-semibold">Language</label>
                             <div class="dropdown">
-                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-units-btn">
-                                    Imperial
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-language-btn">
+                                    English
                                 </button>
                                 <ul class="dropdown-menu w-25">
-                                    <li><a class="dropdown-item units-option" href="#" data-units="Imperial">Imperial</a></li>
-                                    <li><a class="dropdown-item units-option" href="#" data-units="Metric">Metric</a></li>
+                                    <li><a class="dropdown-item languages-option" href="#" data-language="English">English</a></li>
                                 </ul>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center w-50 py-2 border-bottom mb-3">
-                            <label class="form-label fw-semibold">Who can comment?</label>
+                            <label class="form-label fw-semibold">Ratings</label>
                             <div class="dropdown">
-                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-comment-btn">
-                                    Everyone
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-rating-btn">
+                                    Show
                                 </button>
                                 <ul class="dropdown-menu w-25">
-                                    <li><a class="dropdown-item comment-option" href="#" data-comment="Everyone">Everyone</a></li>
-                                    <li><a class="dropdown-item comment-option" href="#" data-comment="Followers">Followers</a></li>
-                                    <li><a class="dropdown-item comment-option" href="#" data-comment="Noone">Noone</a></li>
+                                    <li><a class="dropdown-item ratings-option" href="#" data-rating="Show">Show</a></li>
+                                    <li><a class="dropdown-item ratings-option" href="#" data-rating="Hide">Hide</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center w-50 py-2 border-bottom mb-3">
+                            <label class="form-label fw-semibold">Comments</label>
+                            <div class="dropdown">
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-comment-btn">
+                                    Show
+                                </button>
+                                <ul class="dropdown-menu w-25">
+                                    <li><a class="dropdown-item comments-option" href="#" data-comment="Show">Show</a></li>
+                                    <li><a class="dropdown-item comments-option" href="#" data-comment="Hide">Hide</a></li>
                                 </ul>
                             </div>
                         </div>
                 </div>`,
 
-            "feedback": 
+            "feedback":
                 `<div class="d-flex flex-column align-items-center justify-content-start overflow-auto w-100 px-4 pt-4">
                         <h5>We'd love to hear your feedback on our service. Please let us know how we can improve them.</h5>
                         <div class="w-50 mt-3">
                             <label for="feedback-email" class="form-label">Email address</label>
                             <input type="email" class="form-control" id="feedback-email" placeholder="name@example.com" value="${userData.email}">
                         </div>
-                            
+
                         <div class="mb-3 w-50 mt-3">
                             <label for="feedback-form" class="form-label">Feedback</label>
                             <textarea class="form-control" id="feedback-form" rows="3"></textarea>
@@ -156,7 +176,7 @@ async function setupSettingsPage() {
             content.appendChild(section);
         }
 
-        
+
 
         menu.querySelectorAll(".setting-item").forEach(item => {
             item.addEventListener("click", () => {
@@ -175,7 +195,7 @@ async function setupSettingsPage() {
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Change Name</h5>
+                            <h4 class="modal-title">Change Name</h4>
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
@@ -193,7 +213,7 @@ async function setupSettingsPage() {
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Change Password</h5>
+                            <h4 class="modal-title">Change Password</h4>
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
@@ -215,7 +235,7 @@ async function setupSettingsPage() {
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Are you sure you want to delete your profile?</h5>
+                            <h4 class="modal-title">Are you sure you want to delete your profile?</h4>
                             <button class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
@@ -232,7 +252,7 @@ async function setupSettingsPage() {
 
         document.body.insertAdjacentHTML("beforeend", modals);
 
-        
+
 
         document.getElementById("saveNameBtn").addEventListener("click", handleNameChange);
         document.getElementById("savePasswordBtn").addEventListener("click", handlePasswordChange);
@@ -243,7 +263,7 @@ async function setupSettingsPage() {
                 const modal = new bootstrap.Modal(document.getElementById('changeNameModal'));
                 modal.show();
             }
-            
+
             if (e.target.classList.contains("change-password-btn")) {
                 const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
                 modal.show();
@@ -253,26 +273,26 @@ async function setupSettingsPage() {
                 const modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
                 modal.show();
             }
-            
+
             if (e.target.classList.contains("submit-feedback-btn")) {
                 handleFeedbackSubmit();
             }
-            
+
             if (e.target.classList.contains("theme-option")) {
                 e.preventDefault();
-                setTheme(e.target.dataset.theme);
+                setTheme(e.target.getAttribute("value"));
             }
-            
+
             if (e.target.classList.contains("units-option")) {
                 e.preventDefault();
                 setUnits(e.target.dataset.units);
             }
-            
+
             if (e.target.classList.contains("visibility-option")) {
                 e.preventDefault();
                 setProfileVisibility(e.target.dataset.visibility);
             }
-            
+
             if (e.target.classList.contains("comment-option")) {
                 e.preventDefault();
                 setComment(e.target.dataset.comment);
@@ -289,7 +309,7 @@ async function setupSettingsPage() {
 
 async function handleNameChange() {
     const newName = document.getElementById("newNameInput").value.trim();
-    
+
     if (!newName) {
         alert("Please enter a name");
         return;
@@ -344,7 +364,7 @@ async function handlePasswordChange() {
         alert("Password updated successfully!");
         const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
         modal.hide();
-        
+
         document.getElementById("currentPassword").value = '';
         document.getElementById("newPassword").value = '';
         document.getElementById("newPasswordConfirm").value = '';
@@ -363,7 +383,7 @@ async function handleDeleteUser() {
 
     try {
         const response = await sendAPIRequest("delete-user", "POST", {
-            current_password: currentPassword
+            password: currentPassword
         });
 
         if (response.error) {
@@ -373,10 +393,14 @@ async function handleDeleteUser() {
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
         modal.hide();
-        
+
         document.getElementById("currentPassword").value = '';
+
+
     } catch (error) {
         alert("Error deleting user. Please try again.");
+    } finally {
+        location.replace("http://127.0.0.1:8000/home"); /////
     }
 }
 
@@ -412,18 +436,15 @@ async function handleFeedbackSubmit() {
     }
 }
 
+let activeTheme = localStorage.getItem('theme') || 'Light';
+
 function setTheme(theme) {
-    document.querySelector('.dropdown-theme-btn').textContent = theme;
+    activeTheme = theme;
+    localStorage.setItem('theme', theme)
+    document.getElementById(`theme-${theme.toLowerCase()}-radio`).checked = true;
+    document.querySelector(".dropdown-theme-btn").textContent = theme;
 }
 
 function setUnits(units) {
     document.querySelector('.dropdown-units-btn').textContent = units;
-}
-
-function setProfileVisibility(visibility) {
-    document.querySelector('.dropdown-profile-visibility-btn').textContent = visibility;
-}
-
-function setComment(comment) {
-    document.querySelector('.dropdown-comment-btn').textContent = comment;
 }

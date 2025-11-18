@@ -34,7 +34,7 @@
             <div class="row align-items-center gy-3">
               <div class="col-auto text-center">
                 @yield('image')
-                <div><button id="subscribe-btn" class="subscribe-button mt-2" type="button">Subscribe</button></div>
+                <!--<div><button id="subscribe-btn" class="subscribe-button mt-2" type="button">Subscribe</button></div>--> <!-- YOU SHOULDNT SUBSCRIBE TO YOUR OWN PROFILE-->
               </div>
  
               <div class="col">

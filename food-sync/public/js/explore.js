@@ -9,7 +9,7 @@ import { timeSince } from './scripts.js'
   const loading = document.getElementById('loader');
 
 
-  const PAGE_SIZE = 6;
+  const PAGE_SIZE = 9;
   let page = 0;
   let isLoading = false;
   let done = false;

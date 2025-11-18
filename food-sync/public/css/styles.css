@@ -131,7 +131,12 @@ header .nav-link {
 }
 /* Utility Classes - End */
 
-.accordion-body, .accordion-header, .accordion-button, .modal-content {
+.accordion-body, .accordion-header, .accordion-button, .modal-content, .card-body {
     background-color: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
     color: light-dark(black,white)
+}
+
+.card {
+    border: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
+    border-radius: 5%;
 }

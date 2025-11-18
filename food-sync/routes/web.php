@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/change-name', [SettingsController::class, 'changeName']);
     Route::post('/api/change-password', [SettingsController::class, 'changePassword']);
     Route::post('/api/delete-user', [SettingsController::class, 'deleteUser']);
+    Route::post('/api/send-feedback', [SettingsController::class, 'sendFeedback']);
 });
 
 Route::middleware('auth')->group(function () {

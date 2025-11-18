@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const item = document.querySelector(".setting-item");
     if (item) item.click(); // SELECT THE FIRST MENU TIEM
 
-    localStorage.getItem('theme') ? document.getElementById(`theme-${localStorage.getItem("theme").toLowerCase()}-radio`).checked = true : "";
+    localStorage.getItem('theme') ? document.getElementById(`theme-${localStorage.getItem("theme").toLowerCase()}-radio`).checked = true : ""; // Set defo theme
 });
 
 async function setupSettingsPage() {
@@ -101,7 +101,7 @@ async function setupSettingsPage() {
                             <input type="radio" name="theme" id="theme-dark-radio" hidden>
 
                             <div class="dropdown">
-                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-theme-btn">
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-theme-btn btn btn-primary">
                                     ${activeTheme}
                                 </button>
 
@@ -115,7 +115,7 @@ async function setupSettingsPage() {
                         <div class="d-flex justify-content-between align-items-center mb-3 w-50 py-2 border-bottom">
                             <label class="form-label fw-semibold">Language</label>
                             <div class="dropdown">
-                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-language-btn">
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-language-btn btn btn-primary">
                                     English
                                 </button>
                                 <ul class="dropdown-menu w-25">
@@ -127,8 +127,8 @@ async function setupSettingsPage() {
                         <div class="d-flex justify-content-between align-items-center w-50 py-2 border-bottom mb-3">
                             <label class="form-label fw-semibold">Ratings</label>
                             <div class="dropdown">
-                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-rating-btn">
-                                    Show
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-rating-btn btn btn-primary">
+                                    ${activeRating}
                                 </button>
                                 <ul class="dropdown-menu w-25">
                                     <li><a class="dropdown-item ratings-option" href="#" data-rating="Show">Show</a></li>
@@ -140,8 +140,8 @@ async function setupSettingsPage() {
                         <div class="d-flex justify-content-between align-items-center w-50 py-2 border-bottom mb-3">
                             <label class="form-label fw-semibold">Comments</label>
                             <div class="dropdown">
-                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-comment-btn">
-                                    Show
+                                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-comment-btn btn btn-primary">
+                                    ${activeComment}
                                 </button>
                                 <ul class="dropdown-menu w-25">
                                     <li><a class="dropdown-item comments-option" href="#" data-comment="Show">Show</a></li>
@@ -283,20 +283,16 @@ async function setupSettingsPage() {
                 setTheme(e.target.getAttribute("value"));
             }
 
-            if (e.target.classList.contains("units-option")) {
+            if (e.target.classList.contains("comments-option")) {
                 e.preventDefault();
-                setUnits(e.target.dataset.units);
+                setComments(e.target.dataset.comment);
             }
 
-            if (e.target.classList.contains("visibility-option")) {
+            if (e.target.classList.contains("ratings-option")) {
                 e.preventDefault();
-                setProfileVisibility(e.target.dataset.visibility);
+                setRatings(e.target.dataset.rating);
             }
 
-            if (e.target.classList.contains("comment-option")) {
-                e.preventDefault();
-                setComment(e.target.dataset.comment);
-            }
         });
 
         root.appendChild(main);
@@ -419,7 +415,7 @@ async function handleFeedbackSubmit() {
     }
 
     try {
-        const response = await sendAPIRequest("feedback", "POST", {
+        const response = await sendAPIRequest("send-feedback", "POST", {
             email: email,
             feedback: feedback
         });
@@ -436,7 +432,9 @@ async function handleFeedbackSubmit() {
     }
 }
 
-let activeTheme = localStorage.getItem('theme') || 'Light';
+let activeTheme = localStorage.getItem('theme') || 'Light'; // Get initial value for the theme,comment,rating
+let activeComment = localStorage.getItem('commentVisibility') || 'Show';
+let activeRating = localStorage.getItem('ratingVisibility') || 'Show';
 
 function setTheme(theme) {
     activeTheme = theme;
@@ -445,6 +443,15 @@ function setTheme(theme) {
     document.querySelector(".dropdown-theme-btn").textContent = theme;
 }
 
-function setUnits(units) {
-    document.querySelector('.dropdown-units-btn').textContent = units;
+function setComments(comment) {
+    activeComment = comment;
+    localStorage.setItem('commentVisibility', comment)
+    document.querySelector(".dropdown-comment-btn").textContent = comment;
+
+}
+
+function setRatings(rating) {
+    activeRating = rating;
+    localStorage.setItem('ratingVisibility', rating)
+    document.querySelector(".dropdown-rating-btn").textContent = rating;
 }

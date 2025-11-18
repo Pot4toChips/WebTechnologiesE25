@@ -76,4 +76,16 @@ class SettingsController extends Controller
             'message' => 'User successfully deleted.'
         ]);
     }
+
+    public function sendFeedback(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+            'feedback' => 'required'
+        ]);
+
+        return response()->json([
+            'message' => 'Feedback succesfully sent.'
+        ]);
+    }
 }

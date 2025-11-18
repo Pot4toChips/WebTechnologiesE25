@@ -4,8 +4,14 @@
     align-items: center;
     justify-items: start;
 
+    margin: 1rem;
+
+    width: 900px;
+}
+
+.recipe-post {
     font-weight: 500;
-    
+    background-color: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
     max-width: 900px;
 }
 

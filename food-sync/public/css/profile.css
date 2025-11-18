@@ -9,14 +9,13 @@
   height: 100%;
   margin: 0;
   font-family: 'Roboto', sans-serif;
-  background: #ffffff;
 }
 
 .app-row { min-height: 100vh; }
 .sidebar { min-height: 100vh; }
 
 .panel {
-  background: #fff;
+  background: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
   border-radius: 10px;
   padding: 16px;
   box-shadow: 0 1px 6px rgba(0,0,0,0.04);
@@ -51,7 +50,7 @@
   border-radius: 8px;
   margin-bottom: 12px;
   overflow: hidden;
-  background: #fff;
+  background: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
 }
 .post-media {
   width: 100%;
@@ -70,7 +69,7 @@
 
 .subscribe-button {
   padding: 10px 20px;
-  background-color: #F4A460;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 25px;
@@ -79,7 +78,7 @@
   cursor: pointer;
   transition: background-color 0.25s ease, transform 0.15s ease;
 }
-.subscribe-button:hover { background-color: #e48c45; transform: translateY(-1px); }
+.subscribe-button:hover { background-color: #007bff; transform: translateY(-1px); }
 
 @media (max-width: 767px) {
   .sidebar { display: none; }

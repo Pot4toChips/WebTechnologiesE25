@@ -3,14 +3,31 @@
     padding: 0px;
 }
 
+:root {
+    --light-bg: white;
+    --light-secondary-bg: #f9f9f9;
+    --light-secondary-text: #333333;
+
+    --dark-bg: #242424;
+    --dark-secondary-bg: #181818;
+    --dark-secondary-text: #717171;
+}
+
+html.dark {
+    color-scheme: dark;
+}
+
 html,
 body {
     width: 100vw;
     height: 100vh;
-    font-family: "Roboto", sans-serif;
+    font-family: 'Roboto', sans-serif;
+    color: light-dark(black, white);
+    background-color: light-dark(var(--light-bg), var(--dark-bg));
 }
 
 html {
+    color-scheme: light;
     scroll-behavior: smooth;
 }
 
@@ -26,7 +43,11 @@ main {
 }
 
 p {
-    color: #333333;
+    color: light-dark(black, white);
+}
+
+small {
+    color: light-dark(var(--light-secondary-text), var(--dark-secondary-text));
 }
 
 a {
@@ -40,11 +61,13 @@ a {
 
 /* Side Bar CSS - Start */
 .sidebar {
-    border-right: 2px solid #dde1e6;
+    border-right: 2px solid;
+    border-color: light-dark(#f9f9f9, #181818);
+    background-color: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
 }
 
 .nav-link {
-    color: #333333;
+    color: light-dark(var(--light-secondary-text), var(--dark-secondary-text));
     font-weight: 500;
     padding: 0.625rem 0.75rem;
     border-radius: 5px;
@@ -63,7 +86,7 @@ header .nav-link {
 }
 
 .nav-link:hover {
-    background-color: #e7ebee;
+    background-color: light-dark(#f9f9f9, #181818);
     text-decoration: none;
 }
 
@@ -107,3 +130,8 @@ header .nav-link {
     color: #888888 !important;
 }
 /* Utility Classes - End */
+
+.accordion-body, .accordion-header, .accordion-button, .modal-content {
+    background-color: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
+    color: light-dark(black,white)
+}

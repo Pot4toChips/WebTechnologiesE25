@@ -8,53 +8,67 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\User;
+use App\Models\RecipePost;
+use App\Models\UserProfile;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Display the user's profile
+     */
+    public function load(Request $request): View
+    {
+      $id = Auth::id();
+      $name = User::where('id', $id)->value('name');
+      $userProfile = UserProfile::where('user_id', $id)->first();
+      $posts = RecipePost::where('author_id', $id)
+      ->orderBy('created_at', 'desc')
+      ->get();
+        
+        return view('profile.profile', compact('name', 'posts', 'userProfile'));
+    }
+
+    /**
+     * Update 
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+    $user = Auth::user();
+    $userProfile = UserProfile::where('user_id', $user->id)->first();
+    return view('profile.editprofile', compact('user', 'userProfile'));
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
+ public function update(Request $request)
+{
+    $user = Auth::user();
+$userProfile = UserProfile::firstOrCreate(
+    ['user_id' => $user->id],
+    ['description' => null, 'bio' => null, 'image' => null]
+);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+    // Validate
+    $validated = $request->validate([
+        'description' => 'nullable|string|max:255',
+        'bio' => 'nullable|string',
+        'image' => 'nullable|image|max:2048', // optional, max 2MB
+    ]);
 
-        $request->user()->save();
+    // Update
+    $userProfile->description = $validated['description'] ?? $userProfile->description;
+    $userProfile->bio = $validated['bio'] ?? $userProfile->bio;
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    // Handle image upload
+    if ($request->hasFile('image')) {
+        $path = $request->file('image')->store('profile_images', 'public');
+        $userProfile->image = $path;
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
+    $userProfile->save();
 
-        $user = $request->user();
+    return redirect()->route('profile.load')->with('success', 'Profile updated successfully.');
+  }
+      
 
-        Auth::logout();
 
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
     }
-}

@@ -1,49 +1,44 @@
-// App script    // Posts data
-    const posts = [
-      { name: "banana-cake", id: 1, title: "Banana Cake", description: "Moist banana loaf with walnuts and cinnamon.", image: "images/postex.png", votes: 69 },
-      { name: "pasta", id: 3, title: "Pasta", description: "Creamy garlic pasta with basil and parmesan.", image: "images/postex2.png", votes: 36 },
-      { name: "vareniki", id: 2, title: "Vareniki", description: "Traditional vareniki stuffed with potatoes.", image: "images/postex3.png", votes: 21 }
-    ];
+import {theme} from './scripts.js'
 
-    // Render posts into the #posts-container using Bootstrap
-    function renderPosts(list) {
-      const container = document.getElementById('posts-container');
-      container.innerHTML = '';
-      list.forEach(post => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'post-card';
-        wrapper.id = `post-${post.id}`;
-        wrapper.dataset.postId = post.id;
+//     // Render posts into the #posts-container using Bootstrap
+//     function renderPosts(list) {
+//       const container = document.getElementById('posts-container');
+//       container.innerHTML = '';
+//       list.forEach(post => {
+//         const wrapper = document.createElement('div');
+//         wrapper.className = 'post-card';
+//         wrapper.id = `post-${post.id}`;
+//         wrapper.dataset.postId = post.id;
 
-        wrapper.innerHTML = `
-          <div class="row g-0">
-            <div class="col-12 col-md-5">
-              <img src="${post.image}" alt="${post.title}" class="post-media">
-            </div>
-            <div class="col-12 col-md-7">
-              <div style="padding:14px;">
-                <h5 class="mb-1">${post.title}</h5>
-                <p class="text-muted mb-3">${post.description}</p>
+//         wrapper.innerHTML = `
+//           <div class="row g-0">
+//             <div class="col-12 col-md-5">
+//               <img src="${post.image}" alt="${post.title}" class="post-media">
+//             </div>
+//             <div class="col-12 col-md-7">
+//               <div style="padding:14px;">
+//                 <h5 class="mb-1">${post.title}</h5>
+//                 <p class="text-muted mb-3">${post.description}</p>
 
-                <div class="d-flex align-items-center">
-                  <div>
-                    <button class="btn btn-sm btn-outline-success" type="button" data-action="upvote" data-id="${post.id}" aria-label="Upvote ${post.title}">↑</button>
-                    <span class="votes" id="votes-${post.id}">${post.votes}</span>
-                    <button class="btn btn-sm btn-outline-danger" type="button" data-action="downvote" data-id="${post.id}" aria-label="Downvote ${post.title}">↓</button>
-                  </div>
+//                 <div class="d-flex align-items-center">
+//                   <div>
+//                     <button class="btn btn-sm btn-outline-success" type="button" data-action="upvote" data-id="${post.id}" aria-label="Upvote ${post.title}">↑</button>
+//                     <span class="votes" id="votes-${post.id}">${post.votes}</span>
+//                     <button class="btn btn-sm btn-outline-danger" type="button" data-action="downvote" data-id="${post.id}" aria-label="Downvote ${post.title}">↓</button>
+//                   </div>
 
-                  <div class="ms-auto">
-                    <a href="/post/${post.id}" class="btn btn-sm btn-outline-secondary">View</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-        container.appendChild(wrapper);
-      });
-    }
-
+//                   <div class="ms-auto">
+//                     <a href="/post/${post.id}" class="btn btn-sm btn-outline-secondary">View</a>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         `;
+//         container.appendChild(wrapper);
+//       });
+//     }
+  theme();
     // Vote handler (updates data + UI)
     function handleVote(postId, delta) {
       const p = posts.find(x => x.id === postId);

@@ -93,3 +93,14 @@ export function showToastError(text){
     toastMessage.classList.remove("bg-success");
     toast.show();
 }
+
+export function theme() {
+    console.log('Something shoudl have happened')
+    console.log(localStorage.getItem('theme'))
+    let theme = localStorage.getItem('theme') || 'Light';
+    if (theme === "Dark") {
+        document.documentElement.classList.add("dark")
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+}

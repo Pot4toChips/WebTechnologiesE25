@@ -3,7 +3,7 @@
 use App\Http\Controllers\ExSettingsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipePostController;
-use App\Http\Controllers\settingsContoller;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,6 +17,14 @@ Route::get('/home', function () {
 Route::get('/settings', function () {
     return view('settings');
 })->middleware(['auth', 'verified'])->name('settings');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/api/user', [SettingsController::class, 'getUserData']);
+    Route::post('/api/change-name', [SettingsController::class, 'changeName']);
+    Route::post('/api/change-password', [SettingsController::class, 'changePassword']);
+    Route::post('/api/delete-user', [SettingsController::class, 'deleteUser']);
+    Route::post('/api/send-feedback', [SettingsController::class, 'sendFeedback']);
+});
 
 // Profile Routes
 Route::middleware('auth')->prefix('profile')->name('profile.')->group(function () {

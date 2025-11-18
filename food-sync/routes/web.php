@@ -46,6 +46,7 @@ Route::middleware('auth')->prefix('profile')->name('profile.')->group(function (
 Route::middleware('auth')->group(function () {
     Route::get('/api/recipe-posts/get-recipe-posts', [RecipePostController::class, 'getRecipePosts']);
     Route::post('/api/recipe-posts/create-recipe-post', [RecipePostController::class, 'createRecipePost']);
+    Route::post('/api/recipe-posts/delete-recipe-post', [RecipePostController::class, 'deleteRecipePost']);
 });
 
 require __DIR__ . '/auth.php';

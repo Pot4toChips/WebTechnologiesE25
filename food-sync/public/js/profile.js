@@ -1,4 +1,4 @@
-
+import {sendAPIRequest} from './scripts.js'
 //     // Render posts into the #posts-container using Bootstrap
 //     function renderPosts(list) {
 //       const container = document.getElementById('posts-container');
@@ -79,10 +79,30 @@
       window.location.href = '/profile/edit';
     });
 
-    // Subscribe (placeholder)
-    document.getElementById('subscribe-btn').addEventListener('click', () => {
-      alert('Subscribe action — implement backend call');
+    // Delete post
+    document.querySelectorAll('.delete-post-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+
+          const post_id = button.id;
+
+          const response = await sendAPIRequest("recipe-posts/delete-recipe-post", "POST", {
+            id: Number(post_id)
+          });
+          
+          if (response.error) {
+              alert(response.error);
+              return;
+          }
+          
+          document.getElementById(`post-${post_id}`).remove(); // DELETE FROM THE UI
+    
+      });
     });
+
+    // Subscribe (placeholder)
+    //document.getElementById('subscribe-btn').addEventListener('click', () => {
+    //  alert('Subscribe action — implement backend call');
+    //});
 
     // Load more (placeholder)
     document.getElementById('load-more-btn').addEventListener('click', () => {

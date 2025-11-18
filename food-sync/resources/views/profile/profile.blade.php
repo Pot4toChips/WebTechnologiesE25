@@ -82,7 +82,7 @@ $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
                             </div>
 
                             <div class="ms-auto">
-                                <a href="/post/{{ $post->id }}" class="btn btn-sm btn-outline-secondary">View</a>
+                                <button class="btn btn-sm btn-outline-danger delete-post-btn" id="{{ $post->id }}">Delete Post</button>
                             </div>
                         </div>
                     </div>

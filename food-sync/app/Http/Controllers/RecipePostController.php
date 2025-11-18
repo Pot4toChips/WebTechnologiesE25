@@ -98,4 +98,23 @@ class RecipePostController extends Controller
 
         return $imageName;
     }
+
+    public function deleteRecipePost(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|integer|exists:recipe_posts'
+        ]);
+
+        $post = RecipePost::find($validated['id']);
+
+        if (auth()->id() !== $post->author_id) { // Check if profile is same as author
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $post->delete();
+
+        return response()->json([
+            'message' => 'Recipe deleted successfully.'
+        ]);
+    }
 }

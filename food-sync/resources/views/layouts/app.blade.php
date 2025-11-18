@@ -20,6 +20,7 @@
 </head>
 
 <body>
+    <script src="js/scripts.js" type="module"></script>
     <div class="container-fluid">
         <div class="row">
             @include('partials.navigation')
@@ -49,7 +50,7 @@
 
     @yield('js')
 
-    <script src="js/scripts.js" type="module"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

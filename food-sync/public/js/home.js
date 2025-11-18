@@ -1,6 +1,6 @@
-import { sendAPIRequest, timeSince, storageURL, csrfToken, executeAsyncSafe, showToastMessage, theme } from "./scripts.js";
+import { sendAPIRequest, timeSince, storageURL, csrfToken, executeAsyncSafe, showToastMessage } from "./scripts.js";
 
-theme();
+
 
 const recipePosts = document.getElementById("recipe-posts");
 const recipePostTemplate = document.getElementById("recipe-post-template");

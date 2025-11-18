@@ -1,5 +1,4 @@
-import { sendAPIRequest, theme } from "./scripts.js";
-theme();
+import { sendAPIRequest} from "./scripts.js";
 document.addEventListener("DOMContentLoaded", async () => {
     await setupSettingsPage();
 
@@ -58,7 +57,7 @@ async function setupSettingsPage() {
                             <div class="mb-3 border-bottom pb-2 d-flex justify-content-between align-items-center">
                                 <div>
                                     <p class="mb-1 fw-semibold">Name</p>
-                                    <small>${userData.name}</small>
+                                    <small class="nameField">${userData.name}</small>
                                 </div>
                                 <button class="btn btn-primary change-name-btn">Change</button>
                             </div>
@@ -322,7 +321,7 @@ async function handleNameChange() {
         alert("Name updated successfully!");
         const modal = bootstrap.Modal.getInstance(document.getElementById('changeNameModal'));
         modal.hide();
-        document.querySelector('#account .text-muted').textContent = newName;
+        document.querySelector('#account .nameField').textContent = newName;
     } catch (error) {
         alert("Error updating name. Please try again.");
     }

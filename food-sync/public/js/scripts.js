@@ -37,7 +37,7 @@ export async function sendAPIRequest(path, method, data = null) {
 }
 
 export function timeSince(dateString) {
-    let date = new Date(dateString);
+    let date = new Date(dateString.split('+')[0]); // Remove +00 at the end -> It tricked the date into thinking it is utc+0 instead of +1 cet
     let now = new Date();
 
     let seconds = Math.floor((now - date) / 1000);
@@ -94,9 +94,7 @@ export function showToastError(text){
     toast.show();
 }
 
-export function theme() {
-    console.log('Something shoudl have happened')
-    console.log(localStorage.getItem('theme'))
+function theme() {
     let theme = localStorage.getItem('theme') || 'Light';
     if (theme === "Dark") {
         document.documentElement.classList.add("dark")
@@ -104,3 +102,5 @@ export function theme() {
         document.documentElement.classList.remove("dark");
     }
 }
+
+theme();

@@ -1,12 +1,10 @@
-import { sendAPIRequest, storageURL } from "./scripts.js";
-
+import { sendAPIRequest, theme } from "./scripts.js";
+theme();
 document.addEventListener("DOMContentLoaded", async () => {
     await setupSettingsPage();
 
     const item = document.querySelector(".setting-item");
     if (item) item.click(); // SELECT THE FIRST MENU TIEM
-
-    localStorage.getItem('theme') ? document.getElementById(`theme-${localStorage.getItem("theme").toLowerCase()}-radio`).checked = true : ""; // Set defo theme
 });
 
 async function setupSettingsPage() {
@@ -437,9 +435,10 @@ let activeComment = localStorage.getItem('commentVisibility') || 'Show';
 let activeRating = localStorage.getItem('ratingVisibility') || 'Show';
 
 function setTheme(theme) {
+    document.documentElement.classList.remove(activeTheme.toLowerCase());
     activeTheme = theme;
     localStorage.setItem('theme', theme)
-    document.getElementById(`theme-${theme.toLowerCase()}-radio`).checked = true;
+    theme == "Dark" ? document.documentElement.classList.add(theme.toLowerCase()) : "";
     document.querySelector(".dropdown-theme-btn").textContent = theme;
 }
 

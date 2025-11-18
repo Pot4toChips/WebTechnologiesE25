@@ -4,7 +4,6 @@
 }
 
 :root {
-    color-scheme: light dark;
     --light-bg: white;
     --light-secondary-bg: #f9f9f9;
     --light-secondary-text: #333333;
@@ -14,15 +13,7 @@
     --dark-secondary-text: #717171;
 }
 
-:root:has(#theme-system-radio:checked) {
-    color-scheme: light-dark;
-}
-
-:root:has(#theme-light-radio:checked) {
-    color-scheme: light;
-}
-
-:root:has(#theme-dark-radio:checked) {
+html.dark {
     color-scheme: dark;
 }
 
@@ -36,6 +27,7 @@ body {
 }
 
 html {
+    color-scheme: light;
     scroll-behavior: smooth;
 }
 
@@ -138,3 +130,8 @@ header .nav-link {
     color: #888888 !important;
 }
 /* Utility Classes - End */
+
+.accordion-body, .accordion-header, .accordion-button, .modal-content {
+    background-color: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
+    color: light-dark(black,white)
+}

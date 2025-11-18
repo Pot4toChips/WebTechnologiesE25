@@ -41,17 +41,17 @@
                 <div class="stats-compact">
                   <div class="stat-item">
                     <div class="h5 mb-0" id="stat-posts">120</div>
-                    <small class="text-muted">Posts</small>
+                    <small>Posts</small>
                   </div>
 
                   <div class="stat-item">
                     <div class="h5 mb-0" id="stat-followers">1,500</div>
-                    <small class="text-muted">Followers</small>
+                    <small>Followers</small>
                   </div>
 
                   <div class="stat-item">
                     <div class="h5 mb-0" id="stat-following">300</div>
-                    <small class="text-muted">Following</small>
+                    <small>Following</small>
                   </div>
                 </div>
               </div>

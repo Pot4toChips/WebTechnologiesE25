@@ -12,7 +12,6 @@ $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
 
 @section('css')
     <link rel="stylesheet" href="css/profile.css">
-    <link rel="stylesheet" href="css/profile.css">
 @endsection
 
 @section('name1')
@@ -20,7 +19,7 @@ $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
 @endsection
 
 @section('profile_description')
-     <small id="profile-bio" class="text-muted">{{$userProfile->description}}</small>
+     <small id="profile-bio">{{$userProfile->description}}</small>
 @endsection
 
 @section('image')
@@ -28,7 +27,7 @@ $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
 @endsection
 
 @section('bio')
-      <p id="profile-about" class="text-muted mb-0">{{$userProfile->bio}}.</p>
+      <p id="profile-about" class="mb-0">{{$userProfile->bio}}.</p>
 @endsection
 
 
@@ -53,7 +52,7 @@ $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
                 <div class="col-12 col-md-7">
                     <div style="padding:14px;">
                         <h5 class="mb-1">{{ $post->title }}</h5>
-                        <p class="text-muted mb-3">{{ $post->hh }}</p>
+                        <p class="mb-3">{{ $post->hh }}</p>
 
                         {{-- Ingredients Section --}}
                         @if(!empty($post->ingredients))

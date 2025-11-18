@@ -1,4 +1,4 @@
-
+import {theme} from './scripts.js'
 
 //     // Render posts into the #posts-container using Bootstrap
 //     function renderPosts(list) {
@@ -38,7 +38,7 @@
 //         container.appendChild(wrapper);
 //       });
 //     }
-
+  theme();
     // Vote handler (updates data + UI)
     function handleVote(postId, delta) {
       const p = posts.find(x => x.id === postId);

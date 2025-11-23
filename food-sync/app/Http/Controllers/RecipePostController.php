@@ -58,7 +58,7 @@ class RecipePostController extends Controller
 
         $ingredients = json_decode($request->ingredients, true);
         $instructions = json_decode($request->instructions, true);
-        
+
         $userId = auth()->id();
 
         $uploadedFile = $request->file('image');
@@ -93,8 +93,8 @@ class RecipePostController extends Controller
             'Content-Type' => 'image/webp',
             'x-upsert' => 'true'
         ])->send('POST', $uploadUrl, [
-            'body' => $encodedImage->toString()
-        ]);
+                    'body' => $encodedImage->toString()
+                ]);
 
         return $imageName;
     }
@@ -117,4 +117,39 @@ class RecipePostController extends Controller
             'message' => 'Recipe deleted successfully.'
         ]);
     }
+
+    public function editRecipePost(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer|exists:recipe_posts,id',
+            'title' => 'required|string|max:255',
+            'image' => 'required|image',
+            'ingredients' => 'required',
+            'instructions' => 'required',
+        ]);
+
+        $ingredients = json_decode($request->ingredients, true);
+        $instructions = json_decode($request->instructions, true);
+
+        $userId = auth()->id();
+
+        $recipe = RecipePost::find($request->id);
+
+        if ($userId !== $recipe->author_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $uploadedFile = $request->file('image');
+        $imageName = $this->storeImage($uploadedFile, "recipe_post_images");
+
+        $recipe->update([
+            'title' => $request->title,
+            'image' => $imageName,
+            'ingredients' => $ingredients,
+            'instructions' => $instructions,
+        ]);
+
+        return response()->json($recipe, 200);
+    }
+
 }

@@ -17,6 +17,7 @@ class RecipePostController extends Controller
         $recipes = DB::table('recipe_posts')
             ->join('users', 'recipe_posts.author_id', '=', 'users.id')
             ->select(
+                'recipe_posts.id',
                 'recipe_posts.title',
                 'users.name as author',
                 'recipe_posts.updated_at',
@@ -34,6 +35,7 @@ class RecipePostController extends Controller
                 }
 
                 return [
+                    'id' => $recipe->id,
                     'title' => $recipe->title,
                     'author' => $recipe->author,
                     'time' => $recipe->updated_at,

@@ -24,4 +24,7 @@
             [INSTRUCTIONS]
         </ul>
     </div>
+    <div class="recipe-edit-button" data-id="[ID]">
+        <span class="material-symbols-rounded text-secondary">edit_square</span>
+    </div>
 </article>

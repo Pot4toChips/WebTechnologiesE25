@@ -8,6 +8,7 @@
 }
 
 .recipe-post {
+    position: relative;
     font-weight: 500;
     background-color: light-dark(var(--light-secondary-bg), var(--dark-secondary-bg));
     max-width: 900px;
@@ -15,4 +16,24 @@
 
 .recipe-post img {
     width: 50%;
+}
+
+.recipe-edit-button {
+    position: absolute;
+    bottom: 10px;
+    right: 18px;
+    z-index: 999;
+}
+
+.recipe-edit-button {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.recipe-edit-button span {
+    font-size: 2rem !important;
+}
+
+.edit-icon-container:hover {
+    transform: scale(1.2);
 }

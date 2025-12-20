@@ -3,6 +3,7 @@
 use App\Http\Controllers\ExSettingsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipePostController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +20,6 @@ Route::get('/explore', function () {
     return view('explore');
 })->middleware(['auth', 'verified'])->name('explore');
 
-Route::get('/profile', function() { 
-    return view('profile');
-})->middleware(['auth', 'verified'])->name('home');
-
 Route::get('/settings', function () {
     return view('settings');
 })->middleware(['auth', 'verified'])->name('settings');
@@ -35,12 +32,22 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/send-feedback', [SettingsController::class, 'sendFeedback']);
 });
 
-// Profile Routes
+// Profile related Routes
 Route::middleware('auth')->prefix('profile')->name('profile.')->group(function () {
     Route::get('/', [ProfileController::class, 'load'])  ->name('load');
     Route::get('/edit', [ProfileController::class, 'edit']) ->middleware('verified')->name('edit');
     Route::patch('/edit', [ProfileController::class, 'update']) ->middleware('verified')->name('update');
+    Route::get('/{user}', [ProfileController::class, 'show'])->name('show');
 });
+//follow routes
+Route::middleware('auth')->group(function () {
+    Route::post('/users/{user}/follow', [FollowController::class, 'follow'])->name('users.follow');
+    Route::delete('/users/{user}/unfollow', [FollowController::class, 'unfollow'])->name('users.unfollow');
+    Route::get('/users/{user}/followers', [ProfileController::class, 'followers'])->name('users.followers');
+Route::get('/users/{user}/following', [ProfileController::class, 'following'])->name('users.following');
+
+});
+
 
 // API Routes
 Route::middleware('auth')->group(function () {

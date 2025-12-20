@@ -5,13 +5,8 @@ $storageURL = "https://vvtmkzsrflnaqphsxxal.supabase.co/storage/v1/object/public
 $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
 @endphp 
 
-<script>
-    console.log("Image URL:", @json($imageURL));
-</script>
-
-
 @section('css')
-    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
 @endsection
 
 @section('name1')
@@ -30,7 +25,79 @@ $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
       <p id="profile-about" class="mb-0">{{$userProfile->bio}}.</p>
 @endsection
 
+@section('edit_button')
+@if($isOwner)
+<div class="col-auto text-end">
+    <div class="dropdown">
+        <button
+            id="profileMenuButton"
+            class="btn btn-outline-secondary"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            aria-label="Profile options">
+            &#8943;
+        </button>
 
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileMenuButton">
+            <li>
+                <button
+                    id="edit-profile-btn"
+                    class="dropdown-item"
+                    type="button">
+                    Edit Profile
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
+@endif
+  @endsection
+
+  @section('subscribe_button')
+@if(!$isOwner)
+    @if($isFollowing)
+        <form action="{{ route('users.unfollow', $userProfile->user_id) }}" method="POST" style="display:inline;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-primary">Unsubscribe</button>
+        </form>
+    @else
+        <form action="{{ route('users.follow', $userProfile->user_id) }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+    @endif
+@endif
+@endsection 
+
+@section('stats')
+<div class="col">
+    <div class="stats-compact">
+        <div class="stat-item">
+            <div class="h5 mb-0" id="stat-posts">{{ $postCount }}</div>
+            <small>Posts</small>
+        </div>
+
+<div class="stat-item">
+    <div class="h5 mb-0" id="stat-followers">
+        <a href="{{ route('users.followers', $userProfile->user_id) }}">
+            {{ $followersCount }}
+        </a>
+    </div>
+    <small>Followers</small>
+</div>
+
+<div class="stat-item">
+    <div class="h5 mb-0" id="stat-following">
+        <a href="{{ route('users.following', $userProfile->user_id) }}">
+            {{ $followingCount }}
+        </a>
+    </div>
+    <small>Following</small>
+</div>
+    </div>
+</div>
+@endsection
 
 @section('name2')
  <h4 class="mb-0">{{$name}}'s Posts</h4>
@@ -76,14 +143,14 @@ $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
 
                         <div class="d-flex align-items-center">
                             <div>
-                                <button class="btn btn-sm btn-outline-success" type="button" data-action="upvote" data-id="{{ $post->id }}" aria-label="Upvote {{ $post->title }}">↑</button>
-                                <span class="votes" id="votes-{{ $post->id }}">{{ $post->votes }}</span>
-                                <button class="btn btn-sm btn-outline-danger" type="button" data-action="downvote" data-id="{{ $post->id }}" aria-label="Downvote {{ $post->title }}">↓</button>
                             </div>
-
+                             @if(@$isOwner)
                             <div class="ms-auto">
                                 <button class="btn btn-sm btn-outline-danger delete-post-btn" id="{{ $post->id }}">Delete Post</button>
                             </div>
+
+                            
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -91,9 +158,44 @@ $imageURL = $storageURL . '/profile_images/' . $userProfile->image;
         </div>
     @endforeach
 </div>
+
+@if ($posts->hasPages())
+    <div class="d-flex justify-content-center gap-2 mt-4">
+
+        {{-- Previous --}}
+        @if ($posts->onFirstPage())
+            <button class="btn btn-sm btn-outline-secondary" disabled>
+                ← Previous
+            </button>
+        @else
+            <a href="{{ $posts->previousPageUrl() }}"
+               class="btn btn-sm btn-outline-secondary">
+                ← Previous
+            </a>
+        @endif
+
+        {{-- Page indicator --}}
+        <span class="align-self-center text-muted">
+            Page {{ $posts->currentPage() }} of {{ $posts->lastPage() }}
+        </span>
+
+        {{-- Next --}}
+        @if ($posts->hasMorePages())
+            <a href="{{ $posts->nextPageUrl() }}"
+               class="btn btn-sm btn-outline-secondary">
+                Next →
+            </a>
+        @else
+            <button class="btn btn-sm btn-outline-secondary" disabled>
+                Next →
+            </button>
+        @endif
+
+    </div>
+@endif
 @endsection
 
 
 @section('js')
-    <script src="js/profile.js" type="module"></script>
+    <script src="{{ asset('js/profile.js') }}" type="module"></script>
 @endsection

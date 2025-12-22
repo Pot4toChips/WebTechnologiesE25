@@ -27,14 +27,6 @@ Route::get('/settings', function () {
     return view('settings');
 })->middleware(['auth', 'verified'])->name('settings');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/api/user', [SettingsController::class, 'getUserData']);
-    Route::post('/api/change-name', [SettingsController::class, 'changeName']);
-    Route::post('/api/change-password', [SettingsController::class, 'changePassword']);
-    Route::post('/api/delete-user', [SettingsController::class, 'deleteUser']);
-    Route::post('/api/send-feedback', [SettingsController::class, 'sendFeedback']);
-});
-
 // Profile Routes
 Route::middleware('auth')->prefix('profile')->name('profile.')->group(function () {
     Route::get('/', [ProfileController::class, 'load'])  ->name('load');
@@ -48,6 +40,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/recipe-posts/create-recipe-post', [RecipePostController::class, 'createRecipePost']);
     Route::post('/api/recipe-posts/edit-recipe-post', [RecipePostController::class, 'editRecipePost']);
     Route::post('/api/recipe-posts/delete-recipe-post', [RecipePostController::class, 'deleteRecipePost']);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/api/user', [SettingsController::class, 'getUserData']);
+    Route::post('/api/change-name', [SettingsController::class, 'changeName']);
+    Route::post('/api/change-password', [SettingsController::class, 'changePassword']);
+    Route::post('/api/delete-user', [SettingsController::class, 'deleteUser']);
+    Route::post('/api/send-feedback', [SettingsController::class, 'sendFeedback']);
 });
 
 require __DIR__ . '/auth.php';

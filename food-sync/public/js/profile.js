@@ -1,115 +1,77 @@
-import {sendAPIRequest} from './scripts.js'
-//     // Render posts into the #posts-container using Bootstrap
-//     function renderPosts(list) {
-//       const container = document.getElementById('posts-container');
-//       container.innerHTML = '';
-//       list.forEach(post => {
-//         const wrapper = document.createElement('div');
-//         wrapper.className = 'post-card';
-//         wrapper.id = `post-${post.id}`;
-//         wrapper.dataset.postId = post.id;
+import { sendAPIRequest } from './scripts.js'
 
-//         wrapper.innerHTML = `
-//           <div class="row g-0">
-//             <div class="col-12 col-md-5">
-//               <img src="${post.image}" alt="${post.title}" class="post-media">
-//             </div>
-//             <div class="col-12 col-md-7">
-//               <div style="padding:14px;">
-//                 <h5 class="mb-1">${post.title}</h5>
-//                 <p class="text-muted mb-3">${post.description}</p>
+let posts = [];
 
-//                 <div class="d-flex align-items-center">
-//                   <div>
-//                     <button class="btn btn-sm btn-outline-success" type="button" data-action="upvote" data-id="${post.id}" aria-label="Upvote ${post.title}">↑</button>
-//                     <span class="votes" id="votes-${post.id}">${post.votes}</span>
-//                     <button class="btn btn-sm btn-outline-danger" type="button" data-action="downvote" data-id="${post.id}" aria-label="Downvote ${post.title}">↓</button>
-//                   </div>
+// Render posts into the #posts-container
+function renderPosts(list) {
+  const container = document.getElementById('posts-container');
+  container.innerHTML = '';
+  list.forEach(post => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'post-card';
+    wrapper.id = `post-${post.id}`;
+    wrapper.dataset.postId = post.id;
 
-//                   <div class="ms-auto">
-//                     <a href="/post/${post.id}" class="btn btn-sm btn-outline-secondary">View</a>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         `;
-//         container.appendChild(wrapper);
-//       });
-//     }
-    // Vote handler (updates data + UI)
-    function handleVote(postId, delta) {
-      const p = posts.find(x => x.id === postId);
-      if (!p) return;
-      p.votes = (p.votes || 0) + delta;
-      const el = document.getElementById(`votes-${postId}`);
-      if (el) el.textContent = p.votes;
-    }
+    const ingredientsHTML = post.ingredients ? post.ingredients.map(i => `<li>${i}</li>`).join('') : '';
+    const instructionsHTML = post.instructions ? post.instructions.map(i => `<li>${i}</li>`).join('') : '';
 
-    // upvote/downvote
-    document.addEventListener('click', (ev) => {
-      const btn = ev.target.closest('button[data-action]');
-      if (!btn) return;
-      const action = btn.dataset.action;
-      const id = Number(btn.dataset.id);
-      if (action === 'upvote') handleVote(id, 1);
-      if (action === 'downvote') handleVote(id, -1);
-    });
+    wrapper.innerHTML = `
+      <div class="row g-0">
+        <div class="col-12 col-md-5">
+          <img src="${post.image_url}" alt="${post.title}" class="post-media">
+        </div>
+        <div class="col-12 col-md-7">
+          <div style="padding:14px;">
+            <h5 class="mb-1">${post.title}</h5>
+            ${ingredientsHTML ? `<h6 class="fw-bold mt-3">Ingredients</h6><ul class="mb-3">${ingredientsHTML}</ul>` : ''}
+            ${instructionsHTML ? `<h6 class="fw-bold mt-3">Instructions</h6><ol class="mb-3">${instructionsHTML}</ol>` : ''}
+            <div class="d-flex align-items-center">
+              <div class="ms-auto">
+                <button class="btn btn-sm btn-outline-danger delete-post-btn" id="${post.id}">Delete Post</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(wrapper);
+  });
+}
 
-    // Sorting
-    function sortPosts(mode) {
-      let sorted;
-      if (mode === 'top') {
-        sorted = [...posts].sort((a, b) => (b.votes || 0) - (a.votes || 0));
-      } else if (mode === 'recent') {
-        sorted = [...posts].sort((a, b) => b.id - a.id); // recent: newest first
-      } else {
-        sorted = [...posts].sort((a, b) => (b.votes || 0) - (a.votes || 0));
-      }
-      renderPosts(sorted);
-    }
+// Fetch and render posts on load
+async function loadPosts() {
+  try {
+    const data = await sendAPIRequest(`recipe-posts/get-recipe-posts?user_id=${window.userId}`, 'GET');
+    posts = data || [];
+    renderPosts(posts);
+  } catch (error) {
+    console.error('Error loading posts:', error);
+  }
+}
 
-    // Wire sort labels to sorting function
-    document.querySelectorAll('label[data-sort]').forEach(label => {
-      label.addEventListener('click', () => sortPosts(label.dataset.sort));
-    });
+// Delete post with event delegation
+document.addEventListener('click', async (ev) => {
+  const btn = ev.target.closest('.delete-post-btn');
+  if (!btn) return;
 
-    // Edit profile (placeholder)
-    document.getElementById('edit-profile-btn').addEventListener('click', () => {
-      window.location.href = '/profile/edit';
-    });
+  const post_id = btn.id;
 
-    // Delete post
-    document.querySelectorAll('.delete-post-btn').forEach(button => {
-        button.addEventListener('click', async () => {
+  const response = await sendAPIRequest("recipe-posts/delete-recipe-post", "POST", {
+    id: Number(post_id)
+  });
 
-          const post_id = button.id;
+  if (response.error) {
+    alert(response.error);
+    return;
+  }
 
-          const response = await sendAPIRequest("recipe-posts/delete-recipe-post", "POST", {
-            id: Number(post_id)
-          });
-          
-          if (response.error) {
-              alert(response.error);
-              return;
-          }
-          
-          document.getElementById(`post-${post_id}`).remove(); // DELETE FROM THE UI
-    
-      });
-    });
+  document.getElementById(`post-${post_id}`).remove(); // DELETE FROM THE UI
+});
 
-    // Subscribe (placeholder)
-    //document.getElementById('subscribe-btn').addEventListener('click', () => {
-    //  alert('Subscribe action — implement backend call');
-    //});
+// Edit profile
+document.getElementById('edit-profile-btn').addEventListener('click', () => {
+  window.location.href = '/profile/edit';
+});
 
-    // Load more (placeholder)
-    document.getElementById('load-more-btn').addEventListener('click', () => {
-      alert('Load more — implement paging');
-    });
-
-    // Initial render - Recent by default
-    window.addEventListener('load', () => {
-      sortPosts('recent');
-    });
+// Load posts on page load
+window.addEventListener('load', loadPosts);

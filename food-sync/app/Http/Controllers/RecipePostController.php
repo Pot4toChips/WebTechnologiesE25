@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 
 class RecipePostController extends Controller
 {
-    public function getRecipePosts()
+    public function getRecipePosts(Request $request)
     {
         $recipes = DB::table('recipe_posts')
             ->join('users', 'recipe_posts.author_id', '=', 'users.id')
@@ -24,14 +24,21 @@ class RecipePostController extends Controller
                 'recipe_posts.image',
                 'recipe_posts.ingredients',
                 'recipe_posts.instructions'
-            )
+            );
+
+        if ($request->has('user_id')) {
+            $recipes->where('recipe_posts.author_id', $request->user_id);
+        }
+
+        $recipes = $recipes
             ->orderBy('recipe_posts.updated_at', 'desc')
             ->get()
             ->map(function ($recipe) {
                 $imageUrl = null;
                 if (!empty($recipe->image)) {
-                    // Construct local image URL from public/images folder
-                    $imageUrl = '/images/' . ltrim($recipe->image, '/');
+                    // Construct Supabase URL
+                    $supabaseUrl = env('SUPABASE_URL');
+                    $imageUrl = $supabaseUrl . '/storage/v1/object/public/recipe_post_images/' . $recipe->image;
                 }
 
                 return [

@@ -25,7 +25,7 @@ function renderRecipePost(recipePostData) {
         .replace(/\[TITLE\]/g, recipePostData.title)
         .replace(/\[AUTHOR\]/g, recipePostData.author)
         .replace(/\[TIME\]/g, timeSince(recipePostData.time))
-        .replace(/\[IMAGE_URL\]/g, `${storageURL}/recipe_post_images/${recipePostData.image}`)
+        .replace(/\[IMAGE_URL\]/g, recipePostData.image_url)
         .replace(/\[INGREDIENTS\]/g, ingredientsHTML)
         .replace(/\[INSTRUCTIONS\]/g, instructionsHTML);
     recipePost.innerHTML = recipePostHTML;

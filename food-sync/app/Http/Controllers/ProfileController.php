@@ -24,11 +24,7 @@ class ProfileController extends Controller
         $id = Auth::id();
         $name = User::where('id', $id)->value('name');
         $userProfile = UserProfile::where('user_id', $id)->first();
-        $posts = RecipePost::where('author_id', $id)
-        ->orderBy('created_at', 'desc')
-        ->get();
-            
-            return view('profile.profile', compact('name', 'posts', 'userProfile'));
+        return view('profile.profile', compact('name', 'userProfile'));
     }
 
     /**

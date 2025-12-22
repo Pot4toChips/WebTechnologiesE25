@@ -2,7 +2,7 @@
 const SUPABASE_URL = "https://vvtmkzsrflnaqphsxxal.supabase.co";
 const SUPABASE_BUCKET = "recipe_post_images";
 import { timeSince } from './scripts.js'
- 
+
 (function () {
   const feed = document.getElementById('feed');
   const sentinel = document.getElementById('sentinel');
@@ -17,6 +17,16 @@ import { timeSince } from './scripts.js'
   function makePostNode(post) {
     let recipePost = document.createElement("article");
     recipePost.className = "recipe-post content-card d-flex flex-column align-items-start justify-content-start m-1";
+
+    let postImage = `<div class="small text-muted mt-2">No image</div>`;
+    if (post.image_url) {
+      postImage = `<div class="d-flex flex-row align-items-start justify-content-start mt-2 w-100 justify-content-center image-container">
+        <img class="w-100 rounded" src="${post.image_url}" alt="Image of ${post.title}" style="height:280px;object-fit:cover;" 
+          onerror="console.error('Image load error', this.src); this.classList.add('img-error'); this.insertAdjacentHTML('afterend', '<div class=\'text-danger small mt-2\'>Image failed to load</div>');"
+          onload="console.debug('Image loaded', this.src);"
+        ></div>`
+    }
+
     recipePost.innerHTML = `
       <div class="recipe-post-header d-flex flex-row align-items-center justify-content-between m-0 w-100">
         <p class="m-0">${post.title}</p>
@@ -27,36 +37,29 @@ import { timeSince } from './scripts.js'
         </div>
       </div>
       <hr class="border-2 w-100 my-2">
-      ${post.image_url? `
-      <div class="d-flex flex-row align-items-start justify-content-start mt-2 w-100 justify-content-center image-container">
-        <img class="w-100 rounded" src="${post.image_url}" alt="Image of ${post.title}" style="height:280px;object-fit:cover;" 
-          onerror="console.error('Image load error', this.src); this.classList.add('img-error'); this.insertAdjacentHTML('afterend', '<div class=\'text-danger small mt-2\'>Image failed to load</div>');"
-          onload="console.debug('Image loaded', this.src);"
-        >
-      </div>
-      ` : `<div class="small text-muted mt-2">No image</div>`}
+      ${postImage}
     `;
     return recipePost;
   }
 
   async function fetchPosts(pageNumber, pageSize) {
     // Try to load posts from the backend API once and page client-side
-  if (window.__explorePostsCache) {
-    const cache = window.__explorePostsCache;
-    const total = cache.length;
+    if (window.__explorePostsCache) {
+      const cache = window.__explorePostsCache;
+      const total = cache.length;
 
-  // If not enough posts to fill the page → loop the posts
-    if (total > 0) {
-      const results = [];
-      for (let i = 0; i < pageSize; i++) {
-        const index = (pageNumber * pageSize + i) % total; 
-        results.push(cache[index]);
+      // If not enough posts to fill the page → loop the posts
+      if (total > 0) {
+        const results = [];
+        for (let i = 0; i < pageSize; i++) {
+          const index = (pageNumber * pageSize + i) % total;
+          results.push(cache[index]);
+        }
+        return results;
       }
-      return results;
-    }
 
-    return []; // no posts at all
-}
+      return []; // no posts at all
+    }
 
 
     try {
@@ -71,23 +74,16 @@ import { timeSince } from './scripts.js'
       const data = await res.json();
       console.debug('Explore: fetched posts from API', data);
 
-      
-      const mapped = data.map((r, i) => {
-        const cleanPath = (r.image_url || "")
-          .replace(/^\/+/, "")         
-          .replace(/^images\//, "")    
-          .replace(/\/{2,}/g, "/");   
-         return {
-             id: r.id ?? `post-${i + 1}`,
-             title: r.title ?? `Recipe ${i + 1}`,
-             author: r.author ?? r.name ?? 'Unknown',
-             time: timeSince(r.time ?? r.updated_at ?? r.updatedAt ?? new Date().toISOString()),
 
-             image_url: cleanPath
-              ? `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${cleanPath}`
-             : null,
-             };
-        });
+      const mapped = data.map((r, i) => {
+        return {
+          id: r.id ?? `post-${i + 1}`,
+          title: r.title ?? `Recipe ${i + 1}`,
+          author: r.author ?? r.name ?? 'Unknown',
+          time: timeSince(r.time ?? r.updated_at ?? r.updatedAt ?? new Date().toISOString()),
+          image_url: r.image_url,
+        };
+      });
 
       window.__explorePostsCache = mapped;
       console.debug('Explore: mapped posts', mapped.slice(0, 10));
@@ -227,7 +223,7 @@ import { timeSince } from './scripts.js'
       const feedWidth = feed.clientWidth || (document.documentElement.clientWidth - 40);
       const tileWidth = feedWidth / COLUMNS || FALLBACK_TILE;
       const rowsThatFit = Math.ceil(rootHeight / tileWidth);
-      let initialNeeded = rowsThatFit * COLUMNS + 3; 
+      let initialNeeded = rowsThatFit * COLUMNS + 3;
       if (initialNeeded < PAGE_SIZE) initialNeeded = PAGE_SIZE;
 
       const placeholderNodes = [];

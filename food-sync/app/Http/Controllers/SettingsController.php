@@ -14,8 +14,8 @@ class SettingsController extends Controller
         $user = $request->user();
 
         return response()->json([
-            'name' => $user->name,
-            'email' => $user->email,
+            'name' => strip_tags($user->name),
+            'email' => strip_tags($user->email),
         ]);
     }
 
@@ -26,12 +26,12 @@ class SettingsController extends Controller
         ]);
 
         $user = $request->user();
-        $user->name = $request->name;
+        $user->name = strip_tags($request->name);
         $user->save();
 
         return response()->json([
             'message' => 'Name updated successfully',
-            'name' => $user->name,
+            'name' => strip_tags($user->name),
         ]);
     }
 

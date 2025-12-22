@@ -61,8 +61,8 @@ class ProfileController extends Controller
         ]);
 
         // Update
-        $userProfile->description = $validated['description'] ?? $userProfile->description;
-        $userProfile->bio = $validated['bio'] ?? $userProfile->bio;
+        $userProfile->description = strip_tags($validated['description']) ?? $userProfile->description;
+        $userProfile->bio = strip_tags($validated['bio']) ?? $userProfile->bio;
 
         $uploadedFile = $request->file('image');
         $imageName = $this->storeImage($uploadedFile, "profile_images");

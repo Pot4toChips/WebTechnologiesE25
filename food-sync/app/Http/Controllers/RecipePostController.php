@@ -36,13 +36,13 @@ class RecipePostController extends Controller
 
                 return [
                     'id' => $recipe->id,
-                    'title' => $recipe->title,
-                    'author' => $recipe->author,
+                    'title' => strip_tags($recipe->title),
+                    'author' => strip_tags($recipe->author),
                     'time' => $recipe->updated_at,
                     'image' => $recipe->image,
                     'image_url' => $imageUrl,
-                    'ingredients' => json_decode($recipe->ingredients, true),
-                    'instructions' => json_decode($recipe->instructions, true),
+                    'ingredients' => array_map('strip_tags', json_decode($recipe->ingredients, true)),
+                    'instructions' => array_map('strip_tags', json_decode($recipe->instructions, true)),
                 ];
             });
 
@@ -67,11 +67,11 @@ class RecipePostController extends Controller
         $imageName = $this->storeImage($uploadedFile, "recipe_post_images");
 
         $recipe = RecipePost::create([
-            'title' => $request->title,
+            'title' => strip_tags($request->title),
             'author_id' => $userId,
             'image' => $imageName,
-            'ingredients' => $ingredients,
-            'instructions' => $instructions,
+            'ingredients' => array_map('strip_tags', $ingredients),
+            'instructions' => array_map('strip_tags', $instructions),
         ]);
 
         return response()->json($recipe, 201);
@@ -145,10 +145,10 @@ class RecipePostController extends Controller
         $imageName = $this->storeImage($uploadedFile, "recipe_post_images");
 
         $recipe->update([
-            'title' => $request->title,
+            'title' => strip_tags($request->title),
             'image' => $imageName,
-            'ingredients' => $ingredients,
-            'instructions' => $instructions,
+            'ingredients' => array_map('strip_tags', $ingredients),
+            'instructions' => array_map('strip_tags', $instructions),
         ]);
 
         return response()->json($recipe, 200);

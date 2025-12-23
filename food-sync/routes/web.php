@@ -48,6 +48,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/recipe-posts/create-recipe-post', [RecipePostController::class, 'createRecipePost']);
     Route::post('/api/recipe-posts/edit-recipe-post', [RecipePostController::class, 'editRecipePost']);
     Route::post('/api/recipe-posts/delete-recipe-post', [RecipePostController::class, 'deleteRecipePost']);
+    // AJAX search (returns an HTML partial of the list)
+    Route::get('/recipe-posts/search', [RecipePostController::class, 'search'])->name('recipe-posts.search');
 });
 
 require __DIR__ . '/auth.php';

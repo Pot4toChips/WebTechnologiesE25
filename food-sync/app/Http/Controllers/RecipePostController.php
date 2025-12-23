@@ -154,4 +154,25 @@ class RecipePostController extends Controller
         return response()->json($recipe, 200);
     }
 
+    /**
+     * AJAX search that returns an HTML partial with matching recipe posts.
+     * GET /recipe-posts/search?q=...
+     */
+    public function search(Request $request)
+    {
+        $q = (string) $request->query('q', '');
+
+        if ($q === '') {
+            $recipes = RecipePost::with('user')->orderBy('updated_at', 'desc')->take(20)->get();
+        } else {
+            $recipes = RecipePost::with('user')
+                ->where('title', 'like', "%{$q}%")
+                ->orderBy('updated_at', 'desc')
+                ->take(20)
+                ->get();
+        }
+
+        return view('recipe_posts._list', ['recipes' => $recipes]);
+    }
+
 }

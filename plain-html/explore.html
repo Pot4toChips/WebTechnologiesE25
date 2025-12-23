@@ -50,6 +50,9 @@
             <main class="content d-flex flex-column align-items-center justify-content-start overflow-x-hidden overflow-y-hidden col-10 m-0 p-0">
                 <div class="d-flex flex-column align-items-center justify-content-start overflow-auto w-100 px-4 pt-4">
                     <!-- Include content related to current page -->
+                    <div class="container my-3 w-100 px-0">
+                        <input id="recipe-search" class="form-control" type="search" placeholder="Search recipes by title or author..." aria-label="Search recipes">
+                    </div>
                     <!-- Feed: posts will be appended into #feed by js/explore.js -->
                     <div id="feed" class="container-fluid p-0 d-flex flex-column justify-content-center align-items-center grid">
                     </div>
@@ -70,6 +73,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
             <!-- Grid-only view: no toggle required -->
         <script src="js/explore.js"></script>
+        <script src="js/recipe_search.js"></script>
+        <style>
+          /* ensure search-hidden items are always hidden */
+          .hidden-by-search { display: none !important; }
+        </style>
 </body>
 
 </html>

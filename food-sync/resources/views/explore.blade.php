@@ -7,7 +7,11 @@
 @endsection
 
 @section('content')
-    <!-- Feed: posts will be appended into #feed by js/explore.js -->
+    <div class="container my-3">
+        <input id="recipe-search" class="form-control" type="search" placeholder="Search recipes by title..." aria-label="Search recipes">
+    </div>
+
+    <!-- Feed: posts will be appended into #feed by js/explore.js or replaced by search -->
     <div id="feed" class="container-fluid p-0 d-flex flex-column justify-content-center align-items-center grid">
     </div>
 
@@ -22,4 +26,5 @@
 
 @section('js')
     <script src="js/explore.js" type="module"></script>
+    <script src="js/recipe_search.js"></script>
 @endsection
